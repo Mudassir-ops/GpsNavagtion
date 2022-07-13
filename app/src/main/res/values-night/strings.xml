@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gps_navigation">GPS NAVIGATION</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="close">close</string>
+    <string name="menu">Menu</string>
+    <string name="famous_pl">Famous Pl</string>
+    <string name="nearby">Nearby</string>
+    <string name="search">Search</string>
+    <string name="recent_search">Recent Search</string>
+    <string name="clear_search">Clear Search</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="share_app">Share App</string>
+    <string name="saved_map">Saved Map</string>
+    <string name="share_my_location">Share My Location</string>
+</resources>

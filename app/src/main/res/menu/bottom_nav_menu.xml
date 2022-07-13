@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/search" />
+
+    <item
+        android:id="@+id/navigation_nearby"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/nearby" />
+
+    <item
+        android:id="@+id/navigation_famousplaces"
+        android:icon="@drawable/ic_baseline_place_24"
+        android:title="@string/famous_pl" />
+    <item
+        android:id="@+id/navigation_menu"
+        android:icon="@drawable/ic_baseline_menu_24"
+        android:title="@string/menu" />
+
+    <item
+        android:id="@+id/invisible"
+        android:visible="false"
+        android:icon="@drawable/ic_baseline_place_24"
+        android:title="@string/famous_pl"  />
+</menu>

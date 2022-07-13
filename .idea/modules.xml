@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gps_Navigation.iml" filepath="$PROJECT_DIR$/.idea/modules/Gps_Navigation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Gps_Navigation.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Gps_Navigation.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Gps_Navigation.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Gps_Navigation.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Gps_Navigation.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Gps_Navigation.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Gps_Navigation.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Gps_Navigation.app.unitTest.iml" />
+    </modules>
+  </component>
+</project>

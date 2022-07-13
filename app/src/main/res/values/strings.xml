@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">GPSNavigation</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="gps_navigation">GPS Navigation</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+    <string name="text_privacy_policy">These are the terms of Service and privacy policy of this app. This app provides you screen casting functionality. This privacy policy provices an overview of how we process personal data of our users. We will not share any of your personal information with anyone except as per stated in this privacy policy.
+    \n\n
+<b> Our Privacy Commitment</b>
+        \n
+        We respect your rights and your privacy. Your ability to make informed choices about the use of your information is important to us. We collect different types of information for various purposes to provide you with more improved services.
+\n\n
+ <b>Information We Collect</b>
+        \n
+ Permissions in this Application are the Following
+    • Write External Storage
+    • Read External Storage
+\n\n
+ <b>Changes to this Privacy Policy</b>
+        \n
+  	 We may change this privacy policy from time to time, by posting the most current privacy policy and its effective date. In case we change this privacy policy substantially, we may bring 	such changes to your attention by explicit notice in this page.
+\n\n
+ <b>Third-party links</b>
+        \n
+   We do not include or offer third-party products or services on our website.
+\n\n
+  <b>Children\'s Privacy</b>
+        \n
+    Our Service does not address anyone under the age of 18 (Children). We do not knowingly collect any personally identifiable information from anyone under the age of 18. If you are a parent/guardian and you are aware that your Children has provided us with Personal Data, please contact us. If we become aware that we have collected Personal Data from children without verification of parental consent, we take steps to remove that information from our servers.
+\n\n
+   <b>Contact Us</b>
+        \n
+    If you have any questions about this Privacy Policy, please contact us.
+     \n\n
+
+    </string>
+    <string name="close">close</string>
+    <string name="menu">Menu</string>
+    <string name="famous_pl">Famous Pl</string>
+    <string name="nearby">Nearby</string>
+    <string name="search">Search</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="islamabad">Islamabad</string>
+    <string name="recent_search">Recent Search</string>
+    <string name="clear_search">Clear Search</string>
+
+    <string name="mapbox_access_token">YOUR_MAPBOX_ACCESS_TOKEN</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="share_app">Share App</string>
+    <string name="saved_map">Saved Map</string>
+    <string name="share_my_location">Share My Location</string>
+</resources>

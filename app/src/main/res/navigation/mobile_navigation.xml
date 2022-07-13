@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_search">
+
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.codesk.gpsnavigation.ui.fragments.search.SearchBottomNavFragment"
+        android:label="@string/search"
+        tools:layout="@layout/fragment_search_bottom_navigation" />
+
+    <fragment
+        android:id="@+id/navigation_nearby"
+        android:name="com.codesk.gpsnavigation.ui.fragments.nearby.NearbyBottomNavFragment"
+        android:label="@string/nearby"
+        tools:layout="@layout/fragment_nearby_bottom_navigation" />
+
+    <fragment
+        android:id="@+id/navigation_famousplaces"
+        android:name="com.codesk.gpsnavigation.ui.fragments.famousplaces.FamousPlacesBottomNavFragment"
+        android:label="@string/famous_pl"
+        tools:layout="@layout/fragment_famous_places_bottom_navigation" />
+
+    <fragment
+        android:id="@+id/navigation_menu"
+        android:name="com.codesk.gpsnavigation.ui.fragments.menu.MenuBottomNavFragment"
+        android:label="@string/menu"
+        tools:layout="@layout/fragment_menu_bottom_navigation" />
+
+    <fragment
+        android:id="@+id/navigation_famous_places_detail"
+        android:name="com.codesk.gpsnavigation.ui.fragments.famousplacesdetail.FamousPlacesDetailFragment"
+        android:label="@string/menu"
+        tools:layout="@layout/fragment_famous_places_detail" />
+
+</navigation>

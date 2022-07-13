@@ -19,10 +19,13 @@
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/fragment_famous_places_detail.xml" value="0.25" />
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/fragment_home.xml" value="0.32916666666666666" />
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/fragment_nearby_bottom_navigation.xml" value="0.2989583333333333" />
+        <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/fragment_saved_map.xml" value="0.31614583333333335" />
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/fragment_search_bottom_navigation.xml" value="0.36666666666666664" />
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/header_layout.xml" value="0.32916666666666666" />
+        <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/header_layoutsecond.xml" value="0.31614583333333335" />
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/nearby_item_layout.xml" value="0.321875" />
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/parent_recylerview.xml" value="0.30416666666666664" />
+        <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/saved_map_item_layout.xml" value="0.3151041666666667" />
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/layout/search_item_layout.xml" value="0.36666666666666664" />
         <entry key="..\:/Mudassir/WorkSpace/Gps Navigation/app/src/main/res/menu/bottom_nav_menu.xml" value="0.32916666666666666" />
       </map>

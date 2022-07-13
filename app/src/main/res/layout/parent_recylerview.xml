@@ -19,7 +19,8 @@
             android:text="Hello World"
             android:textColor="@color/black"
             android:textStyle="bold"
-            card_view:layout_constraintStart_toStartOf="@+id/rv_child"
+            card_view:layout_constraintBottom_toTopOf="@+id/rv_child"
+            card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -29,6 +30,8 @@
             android:layout_height="wrap_content"
             android:padding="20dp"
             android:text="see all"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="@dimen/_14sdp"
             android:textColor="@color/purple_200"
             card_view:layout_constraintBottom_toBottomOf="@+id/textView"
             card_view:layout_constraintEnd_toEndOf="parent"
@@ -38,13 +41,12 @@
             android:id="@+id/rv_child"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
             android:orientation="horizontal"
-            android:padding="20dp"
+            android:paddingHorizontal="@dimen/_15sdp"
             card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintLeft_toLeftOf="parent"
-            card_view:layout_constraintRight_toRightOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent" />
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/textView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

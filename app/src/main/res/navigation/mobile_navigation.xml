@@ -34,5 +34,9 @@
         android:name="com.codesk.gpsnavigation.ui.fragments.famousplacesdetail.FamousPlacesDetailFragment"
         android:label="@string/menu"
         tools:layout="@layout/fragment_famous_places_detail" />
-
+    <fragment
+        android:id="@+id/navigation_saved_map"
+        android:name="com.codesk.gpsnavigation.ui.fragments.savedmap.SavedMapFragment"
+        android:label="@string/menu"
+        tools:layout="@layout/fragment_saved_map" />
 </navigation>

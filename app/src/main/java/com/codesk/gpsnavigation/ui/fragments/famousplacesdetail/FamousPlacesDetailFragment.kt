@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentFamousPlacesDetailBinding
 import com.codesk.gpsnavigation.model.adapters.FamousPlacesItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.FamousPlacesDetailDataModel
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showDialog
 import java.util.*
 
 class FamousPlacesDetailFragment : Fragment() {
@@ -31,13 +33,40 @@ class FamousPlacesDetailFragment : Fragment() {
 
         binding.apply {
             famousPlacesItemAdapter = FamousPlacesItemAdapter(requireContext()) {
-
                 overlayLayout.visibility = View.VISIBLE
                 /* outerLayoutFamousPlacesDetail.backgroundTintList= ColorStateList.valueOf(Color.parseColor("#d8d8d8"))*/
             }
 
-            overlayLayout.setOnClickListener {
+            topOverlayEmptyLayout.setOnClickListener {
                 overlayLayout.visibility = View.INVISIBLE
+            }
+
+
+            ivPrivacyPolicy.setOnClickListener {
+                requireContext().showDialog(
+                    title = "Privacy Policy",
+                    description = resources.getString(R.string.text_privacy_policy),
+                    titleOfPositiveButton = "yes",
+                    titleOfNegativeButton = "No",
+                    positiveButtonFunction = {
+
+                    })
+            }
+            labelPrivacyPolicy.setOnClickListener {
+                requireContext().showDialog(
+                    title = "Privacy Policy",
+                    description = resources.getString(R.string.text_privacy_policy),
+                    titleOfPositiveButton = "yes",
+                    titleOfNegativeButton = "No",
+                    positiveButtonFunction = {
+
+                    })
+            }
+            labelSavedMap.setOnClickListener {
+                findNavController().navigate(R.id.navigation_saved_map)
+            }
+            ivSavedMap.setOnClickListener {
+                findNavController().navigate(R.id.navigation_saved_map)
             }
 
 

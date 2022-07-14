@@ -13,4 +13,6 @@
     <string name="share_app">Share App</string>
     <string name="saved_map">Saved Map</string>
     <string name="share_my_location">Share My Location</string>
+    <string name="delete">Delete</string>
+    <string name="show_on_the_map">Show On The Map</string>
 </resources>

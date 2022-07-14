@@ -3,11 +3,13 @@ package com.codesk.gpsnavigation.ui.fragments.nearby
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentNearbyBottomNavigationBinding
 import com.codesk.gpsnavigation.model.adapters.NearByItemAdapter
@@ -36,7 +38,14 @@ class NearbyBottomNavFragment : Fragment() {
 
 
         binding.apply {
-            nearByItemAdapter = NearByItemAdapter(requireContext()) {}
+            nearByItemAdapter =
+                NearByItemAdapter(requireContext()) { _position: Int, _placeName: String ->
+                    Log.d(TAG, "onCreateView: $_position")
+                    val bundle = Bundle()
+                    bundle.putString(SELECTEDTYPE, _placeName)
+                    findNavController().navigate(R.id.navigation_nearby_place_detail, bundle)
+
+                }
             rvNearByItem.apply {
                 adapter = nearByItemAdapter
             }
@@ -114,6 +123,10 @@ class NearbyBottomNavFragment : Fragment() {
         return searcItemList
     }
 
+    companion object {
+        val SELECTEDTYPE = "SELECTEDTYPE"
+        val TAG = "NearbyFragmentTAG"
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

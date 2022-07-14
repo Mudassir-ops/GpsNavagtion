@@ -7,23 +7,25 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_100sdp"
+        android:layout_height="@dimen/_60sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/back_imageview"
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_20sdp"
             android:background="@drawable/round_circle_white_fill"
             android:paddingVertical="@dimen/_5sdp"
             android:paddingStart="0dp"
-            android:visibility="gone"
             android:paddingEnd="@dimen/_4sdp"
             android:src="@drawable/ic_baseline_arrow_back_ios_new_24"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/search_textview_layout"
+            app:layout_constraintEnd_toStartOf="@+id/search_textview_layout"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/search_textview_layout" />
 
@@ -36,13 +38,14 @@
             android:background="@drawable/searchview_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/back_imageview"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/search_textview"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
                 android:layout_marginHorizontal="@dimen/_20sdp"
                 android:background="@null"
                 android:hint="Search Your Place "
@@ -59,20 +62,19 @@
                 android:id="@+id/mic_imageview_outer_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_10sdp"
                 android:background="@drawable/round_circle_white_fill"
                 android:backgroundTint="@color/blue_burry"
                 android:elevation="@dimen/_10sdp"
                 android:padding="@dimen/_3sdp"
+                android:layout_marginEnd="-10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/search_textview"
+                app:layout_constraintEnd_toEndOf="@+id/search_textview"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/mic_imageview"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
                     android:src="@drawable/ic_baseline_mic_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -81,6 +83,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

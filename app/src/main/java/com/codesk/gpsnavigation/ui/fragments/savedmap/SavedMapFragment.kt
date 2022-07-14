@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentFamousPlacesDetailBinding
+import com.codesk.gpsnavigation.databinding.FragmentSavedMapBinding
 import com.codesk.gpsnavigation.model.adapters.SavedMapItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.SavedMapDataModel
 
 class SavedMapFragment : Fragment() {
 
-    private var _binding: FragmentFamousPlacesDetailBinding? = null
+    private var _binding: FragmentSavedMapBinding? = null
     private val binding get() = _binding!!
 
 
@@ -24,16 +25,20 @@ class SavedMapFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFamousPlacesDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentSavedMapBinding.inflate(inflater, container, false)
 
         binding.apply {
             savedMapItemAdapter = SavedMapItemAdapter(requireContext()) {
-
+                overlayLayout
+                overlayLayout.visibility = View.VISIBLE
                 /* outerLayoutFamousPlacesDetail.backgroundTintList= ColorStateList.valueOf(Color.parseColor("#d8d8d8"))*/
             }
 
+            topOverlayEmptyLayout.setOnClickListener {
+                overlayLayout.visibility = View.INVISIBLE
+            }
 
-            rvFamousPlacesDetail.apply {
+            rvSavedMap.apply {
                 adapter = savedMapItemAdapter
             }
 
@@ -86,5 +91,9 @@ class SavedMapFragment : Fragment() {
 
     companion object {
 
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardview_outer_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_5sdp"
+    android:padding="@dimen/_5sdp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_travel_mode"
+        android:layout_width="@dimen/_15sdp"
+        android:layout_height="@dimen/_15sdp"
+        android:src="@drawable/ic_baseline_directions_bus_filled_24"
+        app:layout_constraintBottom_toTopOf="@+id/tv_travel_mode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_travel_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_2sdp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Walk"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_travel_mode" />
+
+
+    <!-- <RadioButton
+         android:id="@+id/rb_promotion"
+         android:layout_width="wrap_content"
+         android:layout_height="@dimen/_33sdp"
+         android:layout_margin="@dimen/_5sdp"
+         android:background="@drawable/custom_radio_button"
+         android:button="@android:color/transparent"
+         android:fontFamily="@font/biryani"
+         android:checked="true"
+         android:gravity="center_vertical|center_horizontal"
+         android:padding="@dimen/_10sdp"
+         android:text="yghp"
+         android:textColor="@color/white"
+         android:textSize="@dimen/_8ssp"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>

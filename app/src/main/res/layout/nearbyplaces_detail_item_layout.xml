@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_10sdp"
+    android:layout_marginVertical="@dimen/_4sdp"
+    android:background="@color/cardview_light_background"
+    android:elevation="@dimen/_5sdp"
+    android:padding="@dimen/_5sdp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/famous_places_imageview_cardview_layout"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        app:cardCornerRadius="@dimen/_20sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/famous_places_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+
+            android:id="@+id/famous_places_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            android:scaleType="fitXY"
+            android:src="@drawable/locationpin" />
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/famous_places_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:fontFamily="@font/roboto"
+        android:maxLines="1"
+        android:text="Niagara Falls"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:layout_constraintBottom_toBottomOf="@id/famous_places_imageview_cardview_layout"
+        app:layout_constraintStart_toEndOf="@+id/famous_places_imageview_cardview_layout"
+        app:layout_constraintTop_toTopOf="@+id/famous_places_imageview_cardview_layout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

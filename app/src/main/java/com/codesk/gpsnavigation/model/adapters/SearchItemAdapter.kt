@@ -10,7 +10,6 @@ import com.codesk.gpsnavigation.databinding.SearchItemLayoutBinding
 import com.codesk.gpsnavigation.model.datamodels.SearchItemDataModel
 import com.codesk.gpsnavigation.utill.commons.SearchItemDiffCallback
 import java.util.*
-import kotlin.collections.ArrayList
 
 class SearchItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
     RecyclerView.Adapter<SearchItemAdapter.ViewHolder>() {
@@ -43,7 +42,11 @@ class SearchItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
     inner class ViewHolder(private val binding: SearchItemLayoutBinding, val callback: (Int) -> Unit): RecyclerView.ViewHolder(binding.root) {
         fun bind(dataModel: SearchItemDataModel,context:Context) {
             binding.apply {
-                tvSearchView.text=dataModel.cityName
+                tvSearchView.text = dataModel.cityName
+                cardviewOuterLayout.setOnClickListener {
+                    callback.invoke(adapterPosition)
+                }
+
             }
         }
     }

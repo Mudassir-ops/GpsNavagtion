@@ -39,4 +39,16 @@
         android:name="com.codesk.gpsnavigation.ui.fragments.savedmap.SavedMapFragment"
         android:label="@string/menu"
         tools:layout="@layout/fragment_saved_map" />
+
+    <fragment
+        android:id="@+id/navigation_nearby_place_detail"
+        android:name="com.codesk.gpsnavigation.ui.fragments.nearbyplacesdetail.NearByPlacesDetailFragment"
+        android:label="@string/menu"
+        tools:layout="@layout/fragment_near_by_places_detail" />
+
+    <fragment
+        android:id="@+id/navigation_search_place_map"
+        android:name="com.codesk.gpsnavigation.ui.fragments.searchplacemap.SearchPlaceMapFragment"
+        android:label="@string/menu"
+        tools:layout="@layout/fragment_search_place_map" />
 </navigation>

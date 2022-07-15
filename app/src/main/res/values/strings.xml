@@ -50,13 +50,12 @@
     <string name="famous_pl">Famous Pl</string>
     <string name="nearby">Nearby</string>
     <string name="search">Search</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="islamabad">Islamabad</string>
     <string name="recent_search">Recent Search</string>
     <string name="clear_search">Clear Search</string>
-
-    <string name="mapbox_access_token">YOUR_MAPBOX_ACCESS_TOKEN</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoic2hhaHphZGtoYW4xMjMiLCJhIjoiY2w1amRodWVzMDVndTNvb2RsNngyMHd6YiJ9.JJ1MCwzZbAO653Wtd_inbg</string>
     <string name="rate_us">Rate Us</string>
     <string name="share_app">Share App</string>
     <string name="saved_map">Saved Map</string>

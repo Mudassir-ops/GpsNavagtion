@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+
 }
 
 android {
@@ -62,7 +63,11 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    implementation 'com.mapbox.maps:android:10.0.0-rc.4'
 
+    implementation ('com.mapbox.maps:android:9.2.1'){
+        transitive=true
+    }
 //    implementation 'com.mapbox.maps:android:10.6.1'
 //    implementation('com.mapbox.maps:android:10.6.1') {
 //        exclude group: 'com.mapbox.common', module: 'okhttp'

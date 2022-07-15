@@ -6,6 +6,15 @@
     <string name="gps_navigation">GPS Navigation</string>
     <string name="privacy_policy">Privacy Policy</string>
 
+    <string name="default_lat">00.000000</string>
+    <string name="default_lng">00.000000</string>
+    <string name="enable_gps">Enable GPS</string>
+    <string name="required_for_this_app">Required for this app</string>
+    <string name="enable_now">Enable Now</string>
+    <string name="location_permission_not_granted">Location Permission not granted</string>
+
+
+
     <string name="text_privacy_policy">These are the terms of Service and privacy policy of this app. This app provides you screen casting functionality. This privacy policy provices an overview of how we process personal data of our users. We will not share any of your personal information with anyone except as per stated in this privacy policy.
     \n\n
 <b> Our Privacy Commitment</b>

@@ -14,6 +14,7 @@ import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentNearbyBottomNavigationBinding
 import com.codesk.gpsnavigation.model.adapters.NearByItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.NearByItemDataModel
+import com.codesk.gpsnavigation.utill.commons.AppConstants
 import java.util.*
 
 class NearbyBottomNavFragment : Fragment() {
@@ -131,5 +132,11 @@ class NearbyBottomNavFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume: ${AppConstants.mCurrentLocation}")
+        
     }
 }

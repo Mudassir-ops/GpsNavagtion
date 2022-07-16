@@ -307,7 +307,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/pause_circle_filled/baseline_pause_circle_filled_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/location_on/baseline_location_on_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -317,8 +317,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="fcfbfb" />
-                            <entry key="outputName" value="ic_baseline_pause_circle_filled_24" />
+                            <entry key="outputName" value="location_mapview_icon" />
                             <entry key="sourceFile" value="D:\Mudassir\WorkSpace\Gps Navigation" />
                           </map>
                         </option>

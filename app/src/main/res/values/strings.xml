@@ -14,7 +14,6 @@
     <string name="location_permission_not_granted">Location Permission not granted</string>
 
 
-
     <string name="text_privacy_policy">These are the terms of Service and privacy policy of this app. This app provides you screen casting functionality. This privacy policy provices an overview of how we process personal data of our users. We will not share any of your personal information with anyone except as per stated in this privacy policy.
     \n\n
 <b> Our Privacy Commitment</b>
@@ -55,7 +54,7 @@
     <string name="islamabad">Islamabad</string>
     <string name="recent_search">Recent Search</string>
     <string name="clear_search">Clear Search</string>
-    <string name="mapbox_access_token">pk.eyJ1Ijoic2hhaHphZGtoYW4xMjMiLCJhIjoiY2w1amRodWVzMDVndTNvb2RsNngyMHd6YiJ9.JJ1MCwzZbAO653Wtd_inbg</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoic2hhaHphZGtoYW4xMjMiLCJhIjoiY2sweG16eGtiMDdyMzNjbzE1eGg2cjV2biJ9.ru-Gf4mnyj7N_TV93QFX4Q</string>
     <string name="rate_us">Rate Us</string>
     <string name="share_app">Share App</string>
     <string name="saved_map">Saved Map</string>

@@ -37,15 +37,30 @@ import com.codesk.gpsnavigation.ui.fragments.nearby.NearbyBottomNavFragment.Comp
 import com.codesk.gpsnavigation.utill.commons.AppConstants
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
+import com.google.gson.JsonObject
+import com.mapbox.api.geocoding.v5.models.CarmenFeature
+import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.Mapbox.getApplicationContext
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import java.util.*
 
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-class SearchBottomNavFragment : Fragment() {
+class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
+
+    private val REQUEST_CODE_AUTOCOMPLETE = 1
+    private var home: CarmenFeature? = null
+    private var work: CarmenFeature? = null
+    private val geojsonSourceLayerId = "geojsonSourceLayerId"
+    private val symbolIconId = "symbolIconId"
 
 
     private val RECORD_AUDIO_REQUEST_CODE = 101
-
     private var mCurrentLocation: Location? = null
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var mRequestingLocationUpdates: Boolean? = false
@@ -64,10 +79,17 @@ class SearchBottomNavFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Mapbox.getInstance(getApplicationContext(), getString(R.string.mapbox_access_token))
         _binding = FragmentSearchBottomNavigationBinding.inflate(inflater, container, false)
-        binding.headerLayout.backImageview.visibility = View.VISIBLE
 
+        binding.headerLayout.backImageview.visibility = View.VISIBLE
         binding.apply {
+
+            binding.headerLayout.searchTextview.setOnClickListener {
+                initSearch()
+            }
+
+
             adapterSearchItemAdapter = SearchItemAdapter(requireContext()) {
                 findNavController().navigate(R.id.navigation_search_place_map)
 
@@ -78,33 +100,35 @@ class SearchBottomNavFragment : Fragment() {
 
             headerLayout.micImageviewOuterLayout.setOnClickListener {
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (ContextCompat.checkSelfPermission(
-                                requireContext(),
-                                Manifest.permission.RECORD_AUDIO
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.RECORD_AUDIO
+                        )
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        startVoiceRecognition()
+                    } else {
+                        //--first dialouge appear
+                        requireContext().showDialog(
+                            title = "Privacy Policy",
+                            description = "We need to acess Your Voice Recroder to use voice recognition \n Please allow us to acess your Voice Recorder",
+                            titleOfPositiveButton = "Allow",
+                            titleOfNegativeButton = "Cancel",
+                            positiveButtonFunction = {
+                                getPermissionToRecordAudio()
+                            },
+
                             )
-                            == PackageManager.PERMISSION_GRANTED
-                        ) {
-                            startVoiceRecognition()
-                        } else {
-                            //--first dialouge appear
-                            requireContext().showDialog(
-                                title = "Privacy Policy",
-                                description = "We need to acess Your Voice Recroder to use voice recognition \n Please allow us to acess your Voice Recorder",
-                                titleOfPositiveButton = "Allow",
-                                titleOfNegativeButton = "Cancel",
-                                positiveButtonFunction = {
-                                    getPermissionToRecordAudio()
-                                },
-
-                                )
-
-
-                        }
 
 
                     }
+
+
+                }
             }
+
+
 
 
             headerLayout.searchTextview.addTextChangedListener(object :
@@ -168,7 +192,7 @@ class SearchBottomNavFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if(AppConstants.mCurrentLocation==null){
+        if (AppConstants.mCurrentLocation == null) {
             setUpLocationListener()
         }
 
@@ -241,23 +265,30 @@ class SearchBottomNavFragment : Fragment() {
                     }
                 }
 
-
             }
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode === 3012 && resultCode === AppCompatActivity.RESULT_OK) {
-            val matches: ArrayList<String> = data!!.getStringArrayListExtra("android.speech.extra.RESULTS")!!
+        if (requestCode == 3012 && resultCode == AppCompatActivity.RESULT_OK) {
+            val matches: ArrayList<String> =
+                data!!.getStringArrayListExtra("android.speech.extra.RESULTS")!!
             val result = matches[0]
             //Consume result
-
             binding.headerLayout.searchTextview.setText("$result")
-            Log.d("TextENter", "onActivityResult: $result")
+        } else if (requestCode == REQUEST_CODE_AUTOCOMPLETE && resultCode == AppCompatActivity.RESULT_OK) {
+            val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
+            binding.headerLayout.searchTextview.setText(selectedCarmenFeature.text())
+
+            val searchedLatLng = LatLng(
+                (selectedCarmenFeature.geometry() as Point?)!!.latitude(),
+                (selectedCarmenFeature.geometry() as Point?)!!.longitude()
+            )
         }
     }
 
-    fun startVoiceRecognition() {
+    private fun startVoiceRecognition() {
         val intent = Intent("android.speech.action.RECOGNIZE_SPEECH")
         intent.putExtra("android.speech.extra.LANGUAGE_MODEL", "free_form")
         intent.putExtra("android.speech.extra.PROMPT", "Speak Now")
@@ -265,7 +296,7 @@ class SearchBottomNavFragment : Fragment() {
     }
 
 
-    fun Context.showDialog(
+    private fun Context.showDialog(
         title: String,
         description: String,
         titleOfPositiveButton: String? = null,
@@ -335,12 +366,17 @@ class SearchBottomNavFragment : Fragment() {
                     super.onLocationResult(locationResult)
                     mCurrentLocation = locationResult.lastLocation
                     mRequestingLocationUpdates = true
-                    AppConstants.mCurrentLocation=mCurrentLocation
+                    AppConstants.mCurrentLocation = mCurrentLocation
+
+                    if (mCurrentLocation != null) {
+                        stopLocationUpdates()
+                    }
+
                     Log.d("CurrentLocation", "onLocationResult:$mCurrentLocation ")
 
                 }
             }
-            stopLocationUpdates()
+
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest!!,
                 locationCallback1!!,
@@ -368,14 +404,14 @@ class SearchBottomNavFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        stopLocationUpdates()
+        //  stopLocationUpdates()
     }
 
     private fun stopLocationUpdates() {
         if(AppConstants.mCurrentLocation!=null){
             try {
                 val voidTask: Task<Void> =
-                    fusedLocationProviderClient.removeLocationUpdates(locationCallback1!!)
+                    fusedLocationProviderClient?.removeLocationUpdates(locationCallback1!!)
                 if (voidTask.isSuccessful()) {
                     Log.d(TAG, "StopLocation updates successful! ")
                 } else {
@@ -385,6 +421,45 @@ class SearchBottomNavFragment : Fragment() {
                 Log.d(TAG, " Security exception while removeLocationUpdates")
             }
         }
+    }
+
+    override fun onMapReady(mapboxMap: MapboxMap) {
 
     }
+
+    private fun initSearch() {
+        addUserLocations()
+        val intent = PlaceAutocomplete.IntentBuilder().accessToken(
+            (if (Mapbox.getAccessToken() != null) Mapbox.getAccessToken() else getString(R.string.mapbox_access_token))!!
+        )
+            .placeOptions(
+                PlaceOptions.builder()
+                    .backgroundColor(Color.parseColor("#EEEEEE"))
+                    .limit(10)
+                    .addInjectedFeature(home)
+                    .addInjectedFeature(work)
+                    .build(PlaceOptions.MODE_CARDS)
+            )
+            .build(requireActivity())
+        startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE)
+
+    }
+
+    private fun addUserLocations() {
+
+        home = CarmenFeature.builder().text("Codesk Technologies")
+            .geometry(Point.fromLngLat(73.10539472667229, 33.50094316483796))
+            .placeName("G424+852, Bahria Safari Valley Sector E Bahria Safari Valley, Rawalpindi, Punjab, Pakistan")
+            .id("mapbox-sf")
+            .properties(JsonObject())
+            .build()
+        work = CarmenFeature.builder().text("Codesk Technologies")
+            .geometry(Point.fromLngLat(73.10539472667229, 33.50094316483796))
+            .placeName("G424+852, Bahria Safari Valley Sector E Bahria Safari Valley, Rawalpindi, Punjab, Pakistan")
+            .id("mapbox-dc")
+            .properties(JsonObject())
+            .build()
+    }
+
+
 }

@@ -32,6 +32,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="navigation_home">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="459" />
+                            <option name="y" value="296" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="navigation_menu">
                     <value>
                       <LayoutPositions>
@@ -73,8 +85,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="463" />
-                            <option name="y" value="180" />
+                            <option name="x" value="453" />
+                            <option name="y" value="-31" />
                           </Point>
                         </option>
                       </LayoutPositions>

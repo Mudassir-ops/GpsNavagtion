@@ -19,6 +19,25 @@
             layout="@layout/header_layoutsecond" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/circularProgressIndicatr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:elevation="@dimen/_20sdp"
+        android:indeterminate="true"
+        android:indeterminateDuration="3000"
+        android:max="100"
+        android:progress="70"
+        android:visibility="visible"
+        app:indicatorColor="@color/white"
+        app:indicatorSize="@dimen/_60sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:trackColor="@color/purple_200" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_near_by_place_detail"
         android:layout_width="match_parent"
@@ -29,7 +48,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_layout_out"
         app:layout_constraintVertical_bias="0"
-        tools:listitem="@layout/saved_map_item_layout" />
+        tools:itemCount="7"
+        tools:listitem="@layout/nearbyplaces_detail_item_layout" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/overlay_layout"

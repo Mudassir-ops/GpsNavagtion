@@ -1,5 +1,6 @@
 package com.codesk.gpsnavigation.model.adapters
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +35,11 @@ class ChildAdapter(private val children: List<ChildModel>) :
         holder.imageView.setImageResource(child.image)
         holder.textView.text = child.title
 
-
+        holder.imageView.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt(ParentAdapter.SELECTED_POSITION, position)
+            it.findNavController().navigate(R.id.navigation_famous_places_detail, bundle)
+        }
 
     }
 

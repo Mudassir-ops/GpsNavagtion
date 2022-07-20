@@ -3,21 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.homefragment.HomeFragment">
 
-
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        mapbox:mapbox_cameraTargetLat="33.7114460"
-        mapbox:mapbox_cameraTargetLng="73.039779"
-        mapbox:mapbox_cameraZoom="10" />
+        mapbox:mapbox_cameraZoom="15" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/back_to_camera_tracking_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@null"
+        android:backgroundTint="@color/white"
+        android:elevation="0dp"
+        android:src="@drawable/tracking_refresh_icon"
+        app:backgroundTint="@null"
+        app:elevation="0dp"
+        app:fabCustomSize="@dimen/fabSize"
+        app:fabSize="normal"
+        app:maxImageSize="@dimen/fabImageSize"
+        app:tint="@color/purple_200" />
+
 
 </FrameLayout>

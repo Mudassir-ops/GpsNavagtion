@@ -1,28 +1,18 @@
 package com.codesk.gpsnavigation.model.datamodels
 
-import java.util.*
-
 object ParentDataFactory {
-    private val random = Random()
-
     private val titles =
-        arrayListOf("Pakistan", "India","NewYork", "Canada")
+        arrayListOf("Pakistan", "Australia", "Canada", "England", "Switzerland")
 
-    private fun randomTitle(): String {
-        val index = random.nextInt(titles.size)
-        return titles[index]
-    }
 
-    private fun randomChildren(): List<ChildModel> {
-        return ChildDataFactory.getChildren(5)
+    private fun randomChildren(position: Int): List<ChildModel> {
+        return ChildDataFactory.getChildren(position)
     }
 
     fun getParents(count: Int): List<ParentModel> {
         val parents = mutableListOf<ParentModel>()
-        repeat(count) {
-            val parent = ParentModel(randomTitle(), randomChildren())
-            parents.add(parent)
-        }
+        parents.clear()
+        (0..4).forEach { i -> parents.add(ParentModel(titles[i], randomChildren(i))) }
         return parents
     }
 }

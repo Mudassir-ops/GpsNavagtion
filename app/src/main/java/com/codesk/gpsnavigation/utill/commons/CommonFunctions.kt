@@ -12,6 +12,8 @@ import android.content.res.Resources.Theme
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.location.Address
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
@@ -27,6 +29,7 @@ import androidx.lifecycle.Observer
 import com.codesk.gpsnavigation.R
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 class CommonFunctions {
@@ -192,6 +195,25 @@ class CommonFunctions {
 
         suspend fun deleteAllTable() {
 
+        }
+
+
+        fun getAdddressByLatLng(context: Context, MyLat: Double, MyLong: Double): List<Address> {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val addresses: List<Address> = geocoder.getFromLocation(MyLat, MyLong, 1)
+
+            val cityName: String = addresses[0].getAddressLine(0)
+            val locality: String = addresses[0].locality
+            val countryName: String = addresses[0].countryName
+
+            val stringBuilder = StringBuilder()
+            stringBuilder.append("cityName")
+            stringBuilder.append(cityName)
+            stringBuilder.append("locality")
+            stringBuilder.append(locality)
+            stringBuilder.append("countryName")
+            stringBuilder.append(countryName)
+            return addresses
         }
     }
 }

@@ -34,6 +34,8 @@ class NearByPlacesDetailItemAdapter(mContext: Context, val callback: (Int) -> Un
         fun bind(dataModel: NearByPlacesDetailDataModel, context: Context) {
             binding.apply {
                 famousPlacesName.text = dataModel.cityName
+                famousPlacesAddress.text = dataModel.placeAddress
+
                 Glide.with(context)
                     .load(dataModel.imageResource)
                     .into(famousPlacesImageview)

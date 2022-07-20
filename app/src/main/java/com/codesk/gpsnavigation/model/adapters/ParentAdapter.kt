@@ -66,7 +66,6 @@ class ParentAdapter(mContext: Context, val callback: (Int) -> Unit) :
             adapter = ChildAdapter(parent.children)
             setRecycledViewPool(viewPool)
         }
-
         holder.seeAllBtn.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt(SELECTED_POSITION, position)

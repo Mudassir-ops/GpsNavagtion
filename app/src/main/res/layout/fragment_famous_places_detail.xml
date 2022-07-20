@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white_less_opccity"
-        android:visibility="visible">
+        android:visibility="invisible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/top_overlay_empty_layout"

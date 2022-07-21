@@ -1,4 +1,4 @@
-package com.mapbox.mapboxsdk.plugins.testapp
+package com.codesk.gpsnavigation.utill.commons
 
 import android.content.Context
 import android.location.Location

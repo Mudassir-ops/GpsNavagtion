@@ -1,25 +1,24 @@
-package com.volumecontrol.volumepanel.datasource.local.database
+package com.codesk.gpsnavigation.data.local.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.volumecontrol.volumepanel.datasource.local.dao.StylePanelDao
-import com.volumecontrol.volumepanel.model.StylePanelTable
-import com.volumecontrol.volumepanel.utills.commons.AppConstants.Companion.APP_DATABASE
-
+import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
+import com.codesk.gpsnavigation.utill.commons.AppConstants.Companion.APP_DATABASE
+import com.codesk.gpsnavigation.data.local.dao.SavedMapDao
 
 @Database(
-    entities = [StylePanelTable::class],
-    version = 2,
+    entities = [SavedMapTable::class],
+    version = 1,
     exportSchema = true
 )
 @TypeConverters(
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun stylePanelDao(): StylePanelDao
+    abstract fun savedMapDao(): SavedMapDao
 
     companion object {
         @Volatile
@@ -35,8 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     APP_DATABASE
-                )
-                    .fallbackToDestructiveMigration()
+                ).fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 return instance

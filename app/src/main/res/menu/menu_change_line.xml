@@ -3,7 +3,7 @@
       xmlns:mapbox="http://schemas.android.com/apk/res-auto">
     <item
             android:id="@+id/action_id_remove"
-            android:icon="@drawable/ic_delete"
+            android:icon="@drawable/delete"
             android:title="Remove lines"
             mapbox:showAsAction="ifRoom" />
     <item

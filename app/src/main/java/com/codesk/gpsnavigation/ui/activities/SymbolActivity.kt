@@ -1,61 +1,77 @@
 package com.codesk.gpsnavigation.ui.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.animation.ValueAnimator
-import com.mapbox.mapboxsdk.maps.MapView
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import android.graphics.Color
 import android.os.Bundle
-import com.mapbox.mapboxsdk.Mapbox
+import androidx.appcompat.app.AppCompatActivity
 import com.codesk.gpsnavigation.R
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
-import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.maps.Style.OnStyleLoaded
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
-import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.codesk.gpsnavigation.ui.activities.SymbolActivity
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.Symbol
-import timber.log.Timber
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions
 import com.mapbox.mapboxsdk.utils.BitmapUtils
+import timber.log.Timber
 import java.util.*
 
 class SymbolActivity : AppCompatActivity() {
-    private val random = Random()
-    private val animators: List<ValueAnimator?> = ArrayList<Any?>()
+
     private var mapView: MapView? = null
     private var symbolManager: SymbolManager? = null
     private var symbol: Symbol? = null
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Mapbox.getInstance(this@SymbolActivity, getString(R.string.mapbox_access_token))
         setContentView(R.layout.actvity_notation)
         mapView = findViewById(R.id.mapView)
         if (savedInstanceState != null) {
-            mapView.onCreate(savedInstanceState)
+            mapView!!.onCreate(savedInstanceState)
         }
-        mapView.getMapAsync(OnMapReadyCallback { mapboxMap: MapboxMap ->
+        mapView!!.getMapAsync(OnMapReadyCallback { mapboxMap: MapboxMap ->
             mapboxMap.setStyle(Style.MAPBOX_STREETS) { style: Style ->
                 mapboxMap.moveCamera(CameraUpdateFactory.zoomTo(2.0))
                 addAirplaneImageToStyle(style)
 
                 // create symbol manager
                 val geoJsonOptions = GeoJsonOptions().withTolerance(0.4f)
-                symbolManager = SymbolManager(mapView, mapboxMap, style, null, geoJsonOptions)
+                symbolManager = SymbolManager(mapView!!, mapboxMap, style, null, geoJsonOptions)
 
+
+                mapboxMap.animateCamera(
+                    CameraUpdateFactory.newCameraPosition(
+                        CameraPosition.Builder()
+                            .target(
+                                LatLng(
+                                    36.31929635062353,
+                                    74.65011687614802
+                                )
+                            )
+                            .zoom(14.0)
+                            .build()
+                    ), 4000
+                )
 
                 // set non data driven properties
-                symbolManager!!.iconAllowOverlap = true
-                symbolManager!!.textAllowOverlap = true
+                symbolManager!!.iconAllowOverlap = false
+                symbolManager!!.textAllowOverlap = false
 
                 // create a symbol
                 val symbolOptions = SymbolOptions()
-                    .withLatLng(LatLng(36.31929635062353, 74.65088884901236))
+                    .withLatLng(LatLng(36.31929635062353, 74.65011687614802))
                     .withIconImage(ID_ICON_AIRPORT)
-                    .withIconSize(1.3f)
+                    .withIconSize(0.6f)
                     .withSymbolSortKey(10.0f)
-                    .withDraggable(true)
+                    .withDraggable(false)
                 symbol = symbolManager!!.create(symbolOptions)
                 Timber.e(symbol.toString())
             }
@@ -65,7 +81,7 @@ class SymbolActivity : AppCompatActivity() {
     private fun addAirplaneImageToStyle(style: Style) {
         style.addImage(
             ID_ICON_AIRPORT,
-            BitmapUtils.getBitmapFromDrawable(resources.getDrawable(R.drawable.airplane))!!,
+            BitmapUtils.getBitmapFromDrawable(resources.getDrawable(R.drawable.red_marker))!!,
             true
         )
     }
@@ -87,9 +103,6 @@ class SymbolActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        for (animator in animators) {
-            animator!!.cancel()
-        }
         mapView!!.onStop()
     }
 
@@ -106,15 +119,7 @@ class SymbolActivity : AppCompatActivity() {
         mapView!!.onDestroy()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        mapView!!.onSaveInstanceState(outState)
-    }
-
     companion object {
         private const val ID_ICON_AIRPORT = "airport"
-        private const val MAKI_ICON_CAR = "car-15"
-        private const val MAKI_ICON_CAFE = "cafe-15"
-        private const val MAKI_ICON_CIRCLE = "fire-station-15"
     }
 }

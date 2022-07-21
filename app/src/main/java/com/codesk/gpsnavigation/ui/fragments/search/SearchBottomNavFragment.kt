@@ -71,6 +71,10 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentSearchBottomNavigationBinding? = null
     private val binding get() = _binding!!
 
+    var latitude: Double? = 33.51677995083078
+    var lngitude: Double? = 73.15474762784669
+    var placeName: String? = "Zaraj"
+
     private lateinit var adapterSearchItemAdapter: SearchItemAdapter
     var searcItemList = ArrayList<SearchItemDataModel>()
 
@@ -89,9 +93,12 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                 initSearch()
             }
 
-
             adapterSearchItemAdapter = SearchItemAdapter(requireContext()) {
-                findNavController().navigate(R.id.navigation_search_place_map)
+                val bundle = Bundle()
+                bundle.putDouble(SEARCHEDLATITUDE, latitude!!)
+                bundle.putDouble(SEARCHEDLONGITUDE, lngitude!!)
+                bundle.putString(SEARCHEDNAME, placeName!!)
+                findNavController().navigate(R.id.navigation_search_places_map, bundle)
 
             }
             rvSearch.apply {
@@ -176,11 +183,9 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
 
     private fun gerSearchData(): ArrayList<SearchItemDataModel> {
         searcItemList.clear()
+        searcItemList.add(SearchItemDataModel(cityName = "Zaraj"))
+        searcItemList.add(SearchItemDataModel(cityName = "Zaraj"))
         searcItemList.add(SearchItemDataModel(cityName = "Rawalpindi"))
-        searcItemList.add(SearchItemDataModel(cityName = "Islamabad"))
-        searcItemList.add(SearchItemDataModel(cityName = "Lahore"))
-        searcItemList.add(SearchItemDataModel(cityName = "Karachi"))
-        searcItemList.add(SearchItemDataModel(cityName = "Faislabad"))
 
         return searcItemList
     }
@@ -228,6 +233,9 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
 
     companion object {
         val RECORD_AUDIO_REQUEST_CODE = 101
+        val SEARCHEDLATITUDE = "SEARCHEDLATITUDE"
+        val SEARCHEDLONGITUDE = "SEARCHEDLONGITUDE"
+        val SEARCHEDNAME = "SEARCHEDNAME"
     }
 
     // Callback with the request from calling requestPermissions(...)
@@ -276,15 +284,20 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                 data!!.getStringArrayListExtra("android.speech.extra.RESULTS")!!
             val result = matches[0]
             //Consume result
+            placeName=result
             binding.headerLayout.searchTextview.setText("$result")
         } else if (requestCode == REQUEST_CODE_AUTOCOMPLETE && resultCode == AppCompatActivity.RESULT_OK) {
             val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
             binding.headerLayout.searchTextview.setText(selectedCarmenFeature.text())
+            placeName=selectedCarmenFeature.text()
 
             val searchedLatLng = LatLng(
                 (selectedCarmenFeature.geometry() as Point?)!!.latitude(),
                 (selectedCarmenFeature.geometry() as Point?)!!.longitude()
             )
+            latitude = searchedLatLng.latitude
+            lngitude = searchedLatLng.longitude
+
         }
     }
 
@@ -460,6 +473,5 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
             .properties(JsonObject())
             .build()
     }
-
 
 }

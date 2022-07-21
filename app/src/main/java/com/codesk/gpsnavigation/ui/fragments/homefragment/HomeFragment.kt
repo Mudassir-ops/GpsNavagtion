@@ -55,8 +55,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, OnLocationClickListener,
 
 
 
-
-
     override fun onCameraTrackingDismissed() {
         isInTrackingMode = false
     }

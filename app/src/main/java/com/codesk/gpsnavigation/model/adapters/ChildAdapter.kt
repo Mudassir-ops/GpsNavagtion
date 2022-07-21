@@ -37,19 +37,23 @@ class ChildAdapter(private val children: List<ChildModel>) :
 
         holder.imageView.setOnClickListener {
             val bundle = Bundle()
-            bundle.putInt(ParentAdapter.SELECTED_POSITION, position)
-            it.findNavController().navigate(R.id.navigation_famous_places_detail, bundle)
+            bundle.putDouble(SelectedLatitude, child.latitude!!)
+            bundle.putDouble(SelectedLngitude, child.longitude!!)
+            bundle.putString(SelectedPlaceNAME, child.title)
+            it.findNavController().navigate(R.id.navigation_famousplaces_map, bundle)
         }
-
     }
-
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.child_textView)
         val imageView: ImageView = itemView.findViewById(R.id.child_imageView)
 
     }
-
+    companion object {
+    const val SelectedLatitude="SelectedLatitude"
+    const val SelectedLngitude="SelectedLngitude"
+    const val SelectedPlaceNAME="SelectedPlaceNAME"
+    }
     interface AdapterCallback {
         fun onItemClicked(position: Int)
     }

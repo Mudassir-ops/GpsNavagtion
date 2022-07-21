@@ -12,7 +12,7 @@ import com.codesk.gpsnavigation.model.datamodels.FamousPlacesDetailDataModel
 import com.codesk.gpsnavigation.utill.commons.FamousPlacesDetailItemDiffCallback
 import java.util.*
 
-class FamousPlacesItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
+class FamousPlacesItemAdapter(mContext: Context, val callback: (String,Double,Double) -> Unit) :
     RecyclerView.Adapter<FamousPlacesItemAdapter.ViewHolder>() {
 
     private var TAG = "FamousPlacesItemAdapter"
@@ -35,7 +35,7 @@ class FamousPlacesItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
 
     inner class ViewHolder(
         private val binding: FamosPlacesItemLayoutBinding,
-        val callback: (Int) -> Unit
+        val callback: (String,Double,Double) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dataModel: FamousPlacesDetailDataModel, context: Context) {
             binding.apply {
@@ -46,7 +46,7 @@ class FamousPlacesItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
 
 
                 famousPlacesImageview.setOnClickListener {
-                    callback.invoke(adapterPosition)
+                    callback.invoke(dataModel.cityName,dataModel.latitude!!,dataModel.longitude!!)
                 }
             }
         }

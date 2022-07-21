@@ -29,7 +29,6 @@ class SavedMapFragment : Fragment() {
 
         binding.apply {
             savedMapItemAdapter = SavedMapItemAdapter(requireContext()) {
-                overlayLayout
                 overlayLayout.visibility = View.VISIBLE
                 /* outerLayoutFamousPlacesDetail.backgroundTintList= ColorStateList.valueOf(Color.parseColor("#d8d8d8"))*/
             }

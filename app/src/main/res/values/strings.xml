@@ -60,7 +60,7 @@
     <string name="saved_map">Saved Map</string>
     <string name="share_my_location">Share My Location</string>
     <string name="delete">Delete</string>
-    <string name="show_on_the_map">Show On The Map</string>
+    <string name="show_on_the_map">Show On Map</string>
 
 
     <!-- Spinner for color picker example-->
@@ -560,5 +560,6 @@
     <!-- Extrusion color expression highlight -->
     <string name="tap_on_building_to_highlight">Tap on a building to highlight it</string>
     <string name="home">Home</string>
+    <string name="famous_places_map">Famous Places Map</string>
 
 </resources>

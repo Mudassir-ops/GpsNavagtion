@@ -24,13 +24,12 @@
         android:id="@+id/rv_saved_map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_layout_out"
         app:layout_constraintVertical_bias="0"
-        app:spanCount="2"
         tools:listitem="@layout/saved_map_item_layout" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white_less_opccity"
-        android:visibility="invisible">
+        android:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/top_overlay_empty_layout"

@@ -26,6 +26,8 @@ import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentSearchPlaceMapBinding
 import com.codesk.gpsnavigation.model.adapters.TrvellingModeItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.TravellingModeDataModel
+import com.codesk.gpsnavigation.ui.fragments.search.SearchBottomNavFragment
+import com.codesk.gpsnavigation.ui.fragments.searchplacesmap.SearchPlacesMapFragment
 import com.codesk.gpsnavigation.utill.commons.AppConstants
 import com.codesk.gpsnavigation.utill.commons.AppConstants.Companion.mCurrentLocation
 import com.google.gson.JsonObject
@@ -103,22 +105,30 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
     private val symbolIconId = "symbolIconId"
     //--search map variables
 
+    private var selectedLatitude=0.0
+    private var selectedLongitude=0.0
+    private var selectedPlaceName=""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         Mapbox.getInstance(requireContext(), getString(R.string.mapbox_access_token))
-
         _binding = FragmentSearchPlaceMapBinding.inflate(inflater, container, false)
 
+        selectedLatitude=requireArguments().getDouble(SearchPlacesMapFragment.SEARCHEDLATITUDE)
+        selectedLongitude=requireArguments().getDouble(SearchPlacesMapFragment.SEARCHEDLONGITUDE)
+        selectedPlaceName=requireArguments().getString(SearchPlacesMapFragment.SEARCHEDNAME,"")
+
         binding.apply {
+            placeName.text= selectedPlaceName
+
             mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
                 SearchPlaceMapFragment.mapboxMap = mapboxMap
                 mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
                     origin =
                         Point.fromLngLat(mCurrentLocation!!.longitude, mCurrentLocation!!.latitude)
-                    destination = Point.fromLngLat(73.0397797943801, 33.71144607301427)
+                    destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
                     enableLocationComponent(style)
                     initSource(style)
                     initLayers(style)
@@ -134,7 +144,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                     requestReadPhoneStatePermission(requireActivity())
                 } else {
                     val originPoint = Point.fromLngLat(AppConstants.mCurrentLocation!!.longitude, AppConstants.mCurrentLocation!!.latitude)
-                    val destinationPoint = Point.fromLngLat(73.15633151317878, 33.51551718587875)
+                    val destinationPoint = Point.fromLngLat(selectedLongitude, selectedLatitude)
                     NavigationRoute.builder(requireContext())
                         .accessToken(Mapbox.getAccessToken()!!)
                         .origin(originPoint)
@@ -169,8 +179,8 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                         })
                 }
 
-                val originPoint = Point.fromLngLat(AppConstants.mCurrentLocation!!.longitude, AppConstants.mCurrentLocation!!.latitude)
-                val destinationPoint = Point.fromLngLat(73.15633151317878, 33.51551718587875)
+              /*  val originPoint = Point.fromLngLat(AppConstants.mCurrentLocation!!.longitude, AppConstants.mCurrentLocation!!.latitude)
+                val destinationPoint = Point.fromLngLat(selectedLongitude, selectedLatitude)
                 NavigationRoute.builder(requireContext())
                     .accessToken(Mapbox.getAccessToken()!!)
                     .origin(originPoint)
@@ -203,7 +213,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                             throwable: Throwable?
                         ) {
                         }
-                    })
+                    })*/
 
 
             }
@@ -219,7 +229,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                         mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
                             mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
                                 origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
-                                destination = Point.fromLngLat(73.0397797943801, 33.71144607301427)
+                                destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
 
                                 initSource(style)
                                 initLayers(style)
@@ -237,7 +247,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                         mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
                             mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
                                 origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
-                                destination = Point.fromLngLat(73.0397797943801, 33.71144607301427)
+                                destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
 
                                 initSource(style)
                                 initLayers(style)
@@ -254,7 +264,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                         mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
                             mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
                                 origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
-                                destination = Point.fromLngLat(73.0397797943801, 33.71144607301427)
+                                destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
 
                                 initSource(style)
                                 initLayers(style)
@@ -299,7 +309,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
         private const val ICON_LAYER_ID = "icon-layer-id"
         private const val ICON_SOURCE_ID = "icon-source-id"
         const val RED_PIN_ICON_ID = "red-pin-icon-id"
-        private var mapboxMap: MapboxMap? = null
+        var mapboxMap: MapboxMap? = null
         private val DBFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
     }
 

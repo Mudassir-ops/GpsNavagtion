@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codesk.gpsnavigation.databinding.FamosPlacesItemLayoutBinding
+import com.codesk.gpsnavigation.databinding.SavedMapItemLayoutBinding
 import com.codesk.gpsnavigation.model.datamodels.SavedMapDataModel
 import com.codesk.gpsnavigation.utill.commons.SavedMapItemDiffCallback
 
@@ -27,7 +28,7 @@ class SavedMapItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
     }
 
     inner class ViewHolder(
-        private val binding: FamosPlacesItemLayoutBinding,
+        private val binding: SavedMapItemLayoutBinding,
         val callback: (Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dataModel: SavedMapDataModel, context: Context) {
@@ -38,7 +39,7 @@ class SavedMapItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
                     .into(famousPlacesImageview)
 
 
-                famousPlacesImageview.setOnClickListener {
+                cardviewLayout.setOnClickListener {
                     callback.invoke(adapterPosition)
                 }
             }
@@ -47,7 +48,7 @@ class SavedMapItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v =
-            FamosPlacesItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            SavedMapItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(v, callback)
     }
 

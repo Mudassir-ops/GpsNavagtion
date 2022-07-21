@@ -24,15 +24,15 @@
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edt_save_title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_25sdp"
+        android:layout_height="@dimen/_35sdp"
         android:layout_marginHorizontal="@dimen/_20sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_20sdp"
-        android:background="@null"
-        android:backgroundTint="@color/purple_200"
+        android:background="@drawable/round_backgrund_for_edit_btn"
         android:hint="Enter name Here"
-        android:textColor="@color/grey_color"
-        android:textColorHint="@color/grey_color"
+        android:paddingStart="@dimen/_15sdp"
+        android:textColor="@color/black_less_opacity"
+        android:textColorHint="@color/black_less_opacity"
         android:textSize="@dimen/_12sdp"
         app:layout_constraintBottom_toTopOf="@+id/btn_cancel"
         app:layout_constraintTop_toBottomOf="@+id/label_saved_map" />
@@ -40,7 +40,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_cancel"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_25sdp"
         android:background="@drawable/round_button_bakground"
         android:backgroundTint="@color/light_gray_color"
@@ -53,7 +53,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_save"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_25sdp"
         android:background="@drawable/round_button_bakground"
         android:text="Save"

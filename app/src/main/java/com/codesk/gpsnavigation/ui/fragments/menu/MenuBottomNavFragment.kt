@@ -1,118 +1,141 @@
 package com.codesk.gpsnavigation.ui.fragments.menu
 
-import android.Manifest
-import android.app.Activity
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentMenuBottomNavigationBinding
-import com.codesk.gpsnavigation.utill.commons.AppConstants
-import com.mapbox.api.directions.v5.models.DirectionsResponse
-import com.mapbox.geojson.Point
-import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.codesk.gpsnavigation.model.adapters.ChildAdapter
+import com.codesk.gpsnavigation.model.adapters.SavedMapItemAdapter
+import com.codesk.gpsnavigation.model.datamodels.SavedMapDataModel
+import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showDialog
+
 
 class MenuBottomNavFragment : Fragment() {
-
     private var _binding: FragmentMenuBottomNavigationBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: MenuBottomNavViewModel by viewModels()
 
+
+    private lateinit var savedMapItemAdapter: SavedMapItemAdapter
+    var searcItemList = ArrayList<SavedMapDataModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-
-        Mapbox.getInstance(requireContext(), getString(R.string.mapbox_access_token))
+    ): View {
         _binding = FragmentMenuBottomNavigationBinding.inflate(inflater, container, false)
 
-        requestReadPhoneStatePermission(requireActivity())
+        binding.apply {
+            savedMapItemAdapter = SavedMapItemAdapter(requireContext()) {
+                overlayLayout.visibility = View.VISIBLE
+                /* outerLayoutFamousPlacesDetail.backgroundTintList= ColorStateList.valueOf(Color.parseColor("#d8d8d8"))*/
+            }
+
+            //---actually show on map btn xml naming wrong
+            ivSavedMap.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putDouble(ChildAdapter.SelectedLatitude, 43.08287886692618)
+                bundle.putDouble(ChildAdapter.SelectedLngitude, -79.07416290191135)
+                findNavController().navigate(R.id.navigation_famousplaces_map, bundle)
+            }
 
 
-        //    val originPoint = Point.fromLngLat(-80.311641, 25.910195)
-        val originPoint = Point.fromLngLat(
-            AppConstants.mCurrentLocation!!.longitude,
-            AppConstants.mCurrentLocation!!.latitude
-        )
+            topOverlayEmptyLayout.setOnClickListener {
+                overlayLayout.visibility = View.INVISIBLE
+            }
 
-        val destinationPoint = Point.fromLngLat(73.15633151317878, 33.51551718587875)
+            rvSavedMap.apply {
+                adapter = savedMapItemAdapter
+            }
 
-        binding.navigation.setOnClickListener {
+            ivPrivacyPolicy.setOnClickListener {
+                requireContext().showDialog(
+                    title = "Privacy Policy",
+                    description = resources.getString(R.string.text_privacy_policy),
+                    titleOfPositiveButton = "yes",
+                    titleOfNegativeButton = "No",
+                    positiveButtonFunction = {
 
-            NavigationRoute.builder(requireContext())
-                .accessToken(Mapbox.getAccessToken()!!)
-                .origin(originPoint)
-                .destination(destinationPoint)
-                .build()
-                .getRoute(object : Callback<DirectionsResponse?> {
-                    override fun onResponse(
-                        call: Call<DirectionsResponse?>?,
-                        response: Response<DirectionsResponse?>
-                    ) {
-                        val currentRoute = response.body()!!.routes()[0]
-                        val options = NavigationLauncherOptions.builder()
-                            .directionsRoute(currentRoute)
-                            .shouldSimulateRoute(false)
-                            .build()
-                        NavigationLauncher.startNavigation(requireActivity(), options)
+                    })
+            }
+            labelPrivacyPolicy.setOnClickListener {
+                requireContext().showDialog(
+                    title = "Privacy Policy",
+                    description = resources.getString(R.string.text_privacy_policy),
+                    titleOfPositiveButton = "yes",
+                    titleOfNegativeButton = "No",
+                    positiveButtonFunction = {
 
-                        /* val optionsNavigate = NavigationViewOptions.builder()
-                         optionsNavigate.progressChangeListener { location, routeProgress ->
-                             Log.v("RES", routeProgress.currentState().toString())
-                             if (routeProgress.currentState() == RouteProgressState.ROUTE_ARRIVED) {
-                                 // Execute arrival logic
-                             }
-                         }*/
-                    }
+                    })
+            }
 
-                    override fun onFailure(
-                        call: Call<DirectionsResponse?>?,
-                        throwable: Throwable?
-                    ) {
-                    }
-                })
         }
 
 
+        viewModel.getAllSavedMap().observe(viewLifecycleOwner, Observer {
+            searcItemList.clear()
+            it.map { searcItemList.add(SavedMapDataModel(cityName = "${it.savedPlaceName}", imageResource = R.drawable.dummy_map)) }
+            savedMapItemAdapter.setFamousPlacesitemList(searcItemList )
 
-
+        })
 
         return binding.root
+
     }
 
-    fun requestReadPhoneStatePermission(activity: Activity?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (ActivityCompat.checkSelfPermission(
-                    requireActivity(),
-                    Manifest.permission.READ_PHONE_STATE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                if (activity != null) {
-                    ActivityCompat.requestPermissions(
-                        activity, arrayOf(
-                            Manifest.permission.READ_PHONE_STATE
-                        ),
-                        0x1
-                    )
-                }
-            }
-        }
-    }
+    private fun getNearByData(): ArrayList<SavedMapDataModel> {
+        searcItemList.clear()
+        searcItemList.add(
+            SavedMapDataModel(
+                cityName = "Shah Faisal Masjid",
+                R.drawable.dummy_map
+            )
+        )
+        searcItemList.add(
+            SavedMapDataModel(
+                cityName = "Paksitan Monument",
+                R.drawable.dummy_map
+            )
+        )
+        searcItemList.add(SavedMapDataModel(cityName = "Giga Mall", R.drawable.gigamall))
+        searcItemList.add(
+            SavedMapDataModel(
+                cityName = "Lake View Park",
+                R.drawable.dummy_map
+            )
+        )
+        searcItemList.add(
+            SavedMapDataModel(
+                cityName = "Margala Hills",
+                R.drawable.dummy_map
+            )
+        )
+        searcItemList.add(
+            SavedMapDataModel(
+                cityName = "Centurus Mall",
+                R.drawable.dummy_map
+            )
+        )
 
+
+
+        return searcItemList
+    }
 
     companion object {
 
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

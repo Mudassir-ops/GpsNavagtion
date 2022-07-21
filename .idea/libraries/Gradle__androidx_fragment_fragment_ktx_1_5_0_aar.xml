@@ -2,8 +2,8 @@
   <library name="Gradle: androidx.fragment:fragment-ktx:1.5.0@aar">
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/904963fbc6ae72f49f4925900d56bdb2/transformed/jetified-fragment-ktx-1.5.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/904963fbc6ae72f49f4925900d56bdb2/transformed/jetified-fragment-ktx-1.5.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/904963fbc6ae72f49f4925900d56bdb2/transformed/jetified-fragment-ktx-1.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/904963fbc6ae72f49f4925900d56bdb2/transformed/jetified-fragment-ktx-1.5.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

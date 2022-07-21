@@ -1,13 +1,16 @@
-package com.codesk.gpsnavigation.ui.fragments.famousplaces
+package com.codesk.gpsnavigation.ui.fragments.famousplacesmap
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.codesk.gpsnavigation.data.local.database.AppDatabase
+import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
 
-class FamousPlacesBottomNavViewModel : ViewModel() {
+class FamousPlaceMapFragmentViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+    private var mapDao = AppDatabase.getDatabase(application).savedMapDao()
+
+    suspend fun insertSavedMap(savedMapTable: SavedMapTable) {
+        mapDao.insertSavedMap(savedMapTable)
     }
-    val text: LiveData<String> = _text
+
 }

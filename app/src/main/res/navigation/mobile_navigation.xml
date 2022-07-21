@@ -58,4 +58,17 @@
         android:name="com.codesk.gpsnavigation.ui.fragments.searchplacemap.SearchPlaceMapFragment"
         android:label="@string/menu"
         tools:layout="@layout/fragment_search_place_map" />
+
+    <fragment
+        android:id="@+id/navigation_famousplaces_map"
+        android:name="com.codesk.gpsnavigation.ui.fragments.famousplacesmap.FamousPlaceMapFragment"
+        android:label="@string/famous_places_map"
+        tools:layout="@layout/fragment_famous_place_map" />
+
+    <fragment
+        android:id="@+id/navigation_search_places_map"
+        android:name="com.codesk.gpsnavigation.ui.fragments.searchplacesmap.SearchPlacesMapFragment"
+        android:label="@string/famous_places_map"
+        tools:layout="@layout/fragment_search_place_map" />
+
 </navigation>

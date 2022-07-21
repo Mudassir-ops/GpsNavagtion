@@ -26,9 +26,7 @@ class FamousPlacesBottomNavFragment : Fragment() {
     private var _binding: FragmentFamousPlacesBottomNavigationBinding? = null
     private val binding get() = _binding!!
 
-
     private lateinit var parentAdapter: ParentAdapter
-
     lateinit var recyclerView: RecyclerView
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,7 +60,6 @@ class FamousPlacesBottomNavFragment : Fragment() {
                 ) {
 
                 }
-
                 override fun afterTextChanged(editable: Editable) {
                     val text: String = headerLayout.searchTextview.text.toString()
                         .lowercase(Locale.getDefault())
@@ -70,10 +67,7 @@ class FamousPlacesBottomNavFragment : Fragment() {
 
                 }
             })
-
         }
-
-
         return root
     }
 
@@ -81,13 +75,11 @@ class FamousPlacesBottomNavFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
     private fun initRecycler() {
         recyclerView = binding.rvParent
          parentAdapter=ParentAdapter(requireContext()){
            findNavController().navigate(R.id.navigation_famous_places_detail)
          }
-
         recyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = parentAdapter

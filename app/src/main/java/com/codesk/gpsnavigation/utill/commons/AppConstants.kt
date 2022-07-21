@@ -6,7 +6,7 @@ class AppConstants {
 
     companion object {
 
-        var APP_DATABASE: String = "volumeControl-database"
+        var APP_DATABASE: String = "gps-navigation-database"
         var mCurrentLocation: Location? = null
 
 

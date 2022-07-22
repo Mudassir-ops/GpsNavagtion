@@ -11,7 +11,7 @@ import com.codesk.gpsnavigation.model.datamodels.SearchItemDataModel
 import com.codesk.gpsnavigation.utill.commons.SearchItemDiffCallback
 import java.util.*
 
-class SearchItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
+class SearchItemAdapter(mContext: Context, val callback: (Int,Double,Double,String) -> Unit) :
     RecyclerView.Adapter<SearchItemAdapter.ViewHolder>() {
 
     private var TAG = "SearchItemAdapter"
@@ -39,12 +39,12 @@ class SearchItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
     }*/
 
 
-    inner class ViewHolder(private val binding: SearchItemLayoutBinding, val callback: (Int) -> Unit): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: SearchItemLayoutBinding, val callback: (Int,Double,Double,String) -> Unit): RecyclerView.ViewHolder(binding.root) {
         fun bind(dataModel: SearchItemDataModel,context:Context) {
             binding.apply {
                 tvSearchView.text = dataModel.cityName
                 cardviewOuterLayout.setOnClickListener {
-                    callback.invoke(adapterPosition)
+                    callback.invoke(adapterPosition,dataModel.savedPlaceLatitude!!,dataModel.savedPlaceLongitude!!,dataModel.cityName)
                 }
 
             }
@@ -89,5 +89,13 @@ class SearchItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
         } catch (ex: Exception) {
             Log.d(TAG, "filter: $ex")
         }
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 }

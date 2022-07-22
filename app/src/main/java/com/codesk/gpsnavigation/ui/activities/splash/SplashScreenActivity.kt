@@ -56,6 +56,7 @@ class SplashScreenActivity : AppCompatActivity() {
         binding.content.apply {
             nextBtn.postDelayed(Runnable {
                 binding.content.nextBtn.visibility = View.VISIBLE
+                binding.content.getStattedTv.visibility = View.VISIBLE
                 binding.content.circularProgressIndicatr.visibility = View.GONE
             }, 3000)
             nextBtn.setOnClickListener {

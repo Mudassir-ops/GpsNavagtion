@@ -71,7 +71,7 @@ dependencies {
     implementation "androidx.room:room-runtime:2.4.2"
 
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:4.3.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.4.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v7:0.7.0'

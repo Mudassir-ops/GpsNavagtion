@@ -11,7 +11,7 @@ import com.codesk.gpsnavigation.databinding.SavedMapItemLayoutBinding
 import com.codesk.gpsnavigation.model.datamodels.SavedMapDataModel
 import com.codesk.gpsnavigation.utill.commons.SavedMapItemDiffCallback
 
-class SavedMapItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
+class SavedMapItemAdapter(mContext: Context, val callback: (Double,Double) -> Unit) :
     RecyclerView.Adapter<SavedMapItemAdapter.ViewHolder>() {
 
     private var TAG = "FamousPlacesItemAdapter"
@@ -29,7 +29,7 @@ class SavedMapItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
 
     inner class ViewHolder(
         private val binding: SavedMapItemLayoutBinding,
-        val callback: (Int) -> Unit
+        val callback: (Double,Double) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dataModel: SavedMapDataModel, context: Context) {
             binding.apply {
@@ -40,7 +40,7 @@ class SavedMapItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
 
 
                 cardviewLayout.setOnClickListener {
-                    callback.invoke(adapterPosition)
+                    callback.invoke(dataModel.savedPlaceLatitude!!,dataModel.savedPlaceLongitude!!)
                 }
             }
         }

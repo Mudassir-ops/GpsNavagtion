@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_10sdp"
+    android:layout_marginVertical="@dimen/_20sdp"
+    android:background="@drawable/round_backgrund_for_privacy_policy"
+    android:elevation="@dimen/_20sdp"
+    android:padding="@dimen/_5sdp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/label_saved_map"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:fontFamily="@font/roboto_bold"
+        android:src="@drawable/ic_baseline_wifi_off_24"
+        android:textColor="@color/purple_200"
+        android:textSize="@dimen/_12sdp"
+        android:tint="@color/purple_200"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/edt_save_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+
+        android:fontFamily="@font/roboto_bold"
+        android:text="No Internet "
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey_color"
+        android:textSize="@dimen/_14sdp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_check_your_internet_label"
+        app:layout_constraintTop_toBottomOf="@+id/label_saved_map"
+        app:layout_constraintVertical_bias="0" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_check_your_internet_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:fontFamily="@font/roboto_light"
+        android:text="Check Your Internet Connection and try Again "
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey_color"
+        android:textSize="@dimen/_14sdp"
+        app:layout_constraintBottom_toTopOf="@+id/plz_on_internet_label"
+        app:layout_constraintTop_toBottomOf="@+id/edt_save_title"
+        app:layout_constraintVertical_bias="0" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/plz_on_internet_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Please Turn On"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey_color"
+        android:textSize="@dimen/_12sdp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_save"
+        app:layout_constraintTop_toBottomOf="@+id/tv_check_your_internet_label"
+        app:layout_constraintVertical_bias="0" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_save"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginHorizontal="@dimen/_30sdp"
+        android:background="@drawable/round_button_bakground"
+        android:text="Wifi"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/plz_on_internet_label"
+        app:layout_constraintVertical_bias="0" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -46,6 +46,13 @@ public class TestActivity extends AppCompatActivity implements
 
         mapView.getMapAsync(this);
 
+
+
+
+
+
+
+
     }
 
     @Override

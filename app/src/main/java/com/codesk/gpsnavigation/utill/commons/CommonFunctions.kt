@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Context.WIFI_SERVICE
 import android.content.Intent
 import android.content.res.Resources
 import android.content.res.Resources.NotFoundException
@@ -16,13 +17,17 @@ import android.location.Address
 import android.location.Geocoder
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Html
 import android.text.Spanned
 import android.view.View
 import android.view.Window
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isGone
 import androidx.lifecycle.LifecycleOwner
@@ -98,6 +103,8 @@ class CommonFunctions {
                 }
             })
         }
+
+
 
 
         fun showMessage(view: View, message: String) {
@@ -217,7 +224,7 @@ class CommonFunctions {
             return addresses
         }
 
-        private fun checkForInternet(context: Context): Boolean {
+        fun checkForInternet(context: Context): Boolean {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val network = connectivityManager.activeNetwork ?: return false
@@ -235,6 +242,32 @@ class CommonFunctions {
                 return networkInfo.isConnected
             }
         }
+
+        fun Context.showNoInternetDialog(
+            title: String,
+            description: String,
+            titleOfPositiveButton: String? = null,
+            titleOfNegativeButton: String? = null,
+            positiveButtonFunction: (() -> Unit)? = null,
+            negativeButtonFunction: (() -> Unit)? = null
+        ) {
+            val dialog = Dialog(this, R.style.Theme_Dialog)
+            dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.setCancelable(true)
+            dialog.setContentView(R.layout.no_internet_connection_dialouge_layout)
+
+            val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
+
+            dialogPositiveButton.setOnClickListener {
+                positiveButtonFunction!!.invoke()
+                dialog.dismiss()
+            }
+
+            dialog.show()
+        }
+
+
 
     }
 }

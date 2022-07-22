@@ -26,13 +26,10 @@ import com.mapbox.mapboxsdk.maps.Style
 class HomeFragment : Fragment(), OnMapReadyCallback, OnLocationClickListener,
     OnCameraTrackingChangedListener {
 
-
-
     private var mapView: MapView? = null
     private var mapboxMap: MapboxMap? = null
     private var locationComponent: LocationComponent? = null
     private var isInTrackingMode = false
-
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -46,9 +43,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, OnLocationClickListener,
         if (savedInstanceState != null) {
             binding.mapView.onCreate(savedInstanceState)
         }
-
         binding.mapView.getMapAsync(this)
-
 
         return binding.root
     }
@@ -79,7 +74,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, OnLocationClickListener,
             Style.LIGHT
         ) { style -> enableLocationComponent(style) }
     }
-
 
     private fun enableLocationComponent(loadedMapStyle: Style) {
         if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {

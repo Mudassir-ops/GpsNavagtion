@@ -31,6 +31,8 @@ import com.codesk.gpsnavigation.databinding.FragmentNearbyBottomNavigationBindin
 import com.codesk.gpsnavigation.model.adapters.NearByItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.NearByItemDataModel
 import com.codesk.gpsnavigation.utill.commons.AppConstants
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showNoInternetDialog
 import java.util.*
 
 class NearbyBottomNavFragment : Fragment() {
@@ -90,10 +92,24 @@ class NearbyBottomNavFragment : Fragment() {
             nearByItemAdapter =
                 NearByItemAdapter(requireContext()) { _position: Int, _placeName: String ->
                     Log.d(TAG, "onCreateView: $_position")
-                    val bundle = Bundle()
-                    bundle.putString(SELECTEDTYPE, _placeName)
-                    bundle.putInt(SELECTEDPPOSITION, _position)
-                    findNavController().navigate(R.id.navigation_nearby_place_detail, bundle)
+                    if (CommonFunctions.checkForInternet(requireContext())){
+                        val bundle = Bundle()
+                        bundle.putString(SELECTEDTYPE, _placeName)
+                        bundle.putInt(SELECTEDPPOSITION, _position)
+                        findNavController().navigate(R.id.navigation_nearby_place_detail, bundle)
+                    }else{
+                        requireContext().showNoInternetDialog(
+                            title = "Privacy Policy",
+                            description = "",
+                            titleOfPositiveButton = "",
+                            titleOfNegativeButton = "",
+                            positiveButtonFunction = {
+                                val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                                startActivityForResult(panelIntent,402)
+                            }
+                        )
+                    }
+
 
                 }
             rvNearByItem.apply {
@@ -291,6 +307,8 @@ class NearbyBottomNavFragment : Fragment() {
                 }
 
             }
+        }else if(requestCode==402){
+
         }
     }
 

@@ -33,6 +33,11 @@ class NearByPlacesDetailFragment : Fragment() {
     var selectedTypeName = ""
     var SELECTEDPPOSITION = -1
 
+
+    var latitude = 0.0
+    var longitude = 0.0
+    var palce = ""
+
     //---search suggesion list near by
     private lateinit var searchEngine: SearchEngine
     private lateinit var searchRequestTask: SearchRequestTask
@@ -46,6 +51,7 @@ class NearByPlacesDetailFragment : Fragment() {
             if (suggestions.isEmpty()) {
                 Log.i("SearchApiExample", "No suggestions found")
             } else {
+                Log.d("sadasdasd", "onSuggestions:$suggestions ")
                 searcItemList.clear()
                 when (SELECTEDPPOSITION) {
                     0 -> {
@@ -54,14 +60,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.airplane, it.address!!.country!!
+                                        R.drawable.airplane, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.airplane, it.address!!.street!!
+                                        R.drawable.airplane, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -76,14 +86,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.petrol_stattion, it.address!!.country!!
+                                        R.drawable.petrol_stattion, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.petrol_stattion, it.address!!.street!!
+                                        R.drawable.petrol_stattion, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -97,14 +111,19 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.hospital, it.address!!.country!!
+                                        R.drawable.hospital, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.hospital, it.address!!.street!!
+                                        R.drawable.hospital, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.,
+
                                     )
                                 )
                             }
@@ -119,14 +138,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.bank, it.address!!.country!!
+                                        R.drawable.bank, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.bank, it.address!!.street!!
+                                        R.drawable.bank, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -141,14 +164,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.realestate, it.address!!.country!!
+                                        R.drawable.realestate, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.realestate, it.address!!.street!!
+                                        R.drawable.realestate, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -163,14 +190,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.furniture, it.address!!.country!!
+                                        R.drawable.furniture, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.furniture, it.address!!.street!!
+                                        R.drawable.furniture, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -185,14 +216,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.computer, it.address!!.country!!
+                                        R.drawable.computer, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.computer, it.address!!.street!!
+                                        R.drawable.computer, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -207,14 +242,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.electronics, it.address!!.country!!
+                                        R.drawable.electronics, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.electronics, it.address!!.street!!
+                                        R.drawable.electronics, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -229,14 +268,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.resturant, it.address!!.country!!
+                                        R.drawable.resturant, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.resturant, it.address!!.street!!
+                                        R.drawable.resturant, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -251,14 +294,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.pet, it.address!!.country!!
+                                        R.drawable.pet, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.pet, it.address!!.street!!
+                                        R.drawable.pet, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -273,14 +320,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.forest, it.address!!.country!!
+                                        R.drawable.forest, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.forest, it.address!!.street!!
+                                        R.drawable.forest, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -295,14 +346,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.cafeteria, it.address!!.country!!
+                                        R.drawable.cafeteria, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.cafeteria, it.address!!.street!!
+                                        R.drawable.cafeteria, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -317,14 +372,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.court, it.address!!.country!!
+                                        R.drawable.court, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.court, it.address!!.street!!
+                                        R.drawable.court, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -339,14 +398,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.bakery, it.address!!.country!!
+                                        R.drawable.bakery, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.bakery, it.address!!.street!!
+                                        R.drawable.bakery, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -361,14 +424,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.shop, it.address!!.country!!
+                                        R.drawable.shop, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.shop, it.address!!.street!!
+                                        R.drawable.shop, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -383,14 +450,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.library, it.address!!.country!!
+                                        R.drawable.library, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.library, it.address!!.street!!
+                                        R.drawable.library, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -403,14 +474,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.glass_shop, it.address!!.country!!
+                                        R.drawable.glass_shop, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.glass_shop, it.address!!.street!!
+                                        R.drawable.glass_shop, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -425,7 +500,9 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.gym, it.address!!.country!!
+                                        R.drawable.gym, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
@@ -433,7 +510,9 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.gym, it.address!!.street!!
+                                        R.drawable.gym, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -448,14 +527,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = it.name,
-                                        R.drawable.salon_shop, it.address!!.country!!
+                                        R.drawable.salon_shop, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = it.name,
-                                        R.drawable.salon_shop, it.address!!.street!!
+                                        R.drawable.salon_shop, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -470,14 +553,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.carpenter, it.address!!.country!!
+                                        R.drawable.carpenter, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.carpenter, it.address!!.street!!
+                                        R.drawable.carpenter, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -491,14 +578,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.post_office, it.address!!.country!!
+                                        R.drawable.post_office, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.post_office, it.address!!.street!!
+                                        R.drawable.post_office, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -513,14 +604,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.hardware, it.address!!.country!!
+                                        R.drawable.hardware, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.hardware, it.address!!.street!!
+                                        R.drawable.hardware, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -535,14 +630,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.pharmacy, it.address!!.country!!
+                                        R.drawable.pharmacy, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.pharmacy, it.address!!.street!!
+                                        R.drawable.pharmacy, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -557,14 +656,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.country!!
+                                        R.drawable.university, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.street!!
+                                        R.drawable.university, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -579,14 +682,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.ambulance, it.address!!.country!!
+                                        R.drawable.ambulance, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.ambulance, it.address!!.street!!
+                                        R.drawable.ambulance, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -601,14 +708,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.water, it.address!!.country!!
+                                        R.drawable.water, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.water, it.address!!.street!!
+                                        R.drawable.water, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -623,14 +734,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.country!!
+                                        R.drawable.university, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.street!!
+                                        R.drawable.university, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -645,14 +760,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.country!!
+                                        R.drawable.university, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.street!!
+                                        R.drawable.university, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -667,14 +786,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.painter, it.address!!.country!!
+                                        R.drawable.painter, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.painter, it.address!!.street!!
+                                        R.drawable.painter, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -689,14 +812,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.cineam, it.address!!.country!!
+                                        R.drawable.cineam, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.cineam, it.address!!.street!!
+                                        R.drawable.cineam, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -711,14 +838,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.jewelery, it.address!!.country!!
+                                        R.drawable.jewelery, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.jewelery, it.address!!.street!!
+                                        R.drawable.jewelery, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -734,14 +865,18 @@ class NearByPlacesDetailFragment : Fragment() {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.taxi, it.address!!.country!!
+                                        R.drawable.taxi, it.address!!.country!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
                                         cityName = "${it.name}",
-                                        R.drawable.taxi, it.address!!.street!!
+                                        R.drawable.taxi, it.address!!.street!!,
+                                        it.requestOptions.options.proximity!!.latitude(),
+                                        it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
                             }
@@ -812,17 +947,28 @@ class NearByPlacesDetailFragment : Fragment() {
         )
 
 
-
         binding.apply {
             headerLayoutsecond.labelSavedMap.text = selectedTypeName
             headerLayoutsecond.backImageview.setOnClickListener {
                 findNavController().navigate(R.id.navigation_nearby)
+
             }
 
-
-            nearByPlacesDetailItemAdapter = NearByPlacesDetailItemAdapter(requireContext()) {
-                overlayLayout.visibility = View.VISIBLE
+            binding.showOnTheMapLayoutRight.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putDouble(SelectedLatitude, latitude)
+                bundle.putDouble(SelectedLngitude, longitude)
+                bundle.putString(SelectedPlaceNAME, palce)
+                findNavController().navigate(R.id.navigation_famousplaces_map, bundle)
             }
+
+            nearByPlacesDetailItemAdapter =
+                NearByPlacesDetailItemAdapter(requireContext()) { pos, lat, lng, placeName ->
+                    latitude = lat
+                    longitude = lng
+                    palce = placeName
+                    overlayLayout.visibility = View.VISIBLE
+                }
             rvNearByPlaceDetail.apply {
                 adapter = nearByPlacesDetailItemAdapter
             }
@@ -847,4 +993,11 @@ class NearByPlacesDetailFragment : Fragment() {
         searchRequestTask.cancel()
         _binding = null
     }
+
+    companion object {
+        val SelectedLatitude = "SelectedLatitude"
+        val SelectedLngitude = "SelectedLngitude"
+        val SelectedPlaceNAME = "SelectedPlaceNAME"
+    }
+
 }

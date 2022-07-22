@@ -106,6 +106,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/delete_layout_left"
                     android:layout_width="0dp"
+                    android:visibility="gone"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/show_onThe_map_layout_right"

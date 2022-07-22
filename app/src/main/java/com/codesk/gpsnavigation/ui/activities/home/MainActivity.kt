@@ -2,21 +2,32 @@ package com.codesk.gpsnavigation.ui.activities.home
 
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuItemImpl
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.isGone
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.codesk.gpsnavigation.R
-import com.codesk.gpsnavigation.data.remote.ApiServices
-import com.codesk.gpsnavigation.data.remote.Networking
+import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.databinding.ActivityMainBinding
 import com.codesk.gpsnavigation.utill.commons.SharedPreferencesUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mapbox.mapboxsdk.Mapbox
+import kotlin.system.exitProcess
 
 
 class MainActivity : AppCompatActivity() {
@@ -115,7 +126,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navController = navHostFragment.navController
+        val id = navController.currentDestination!!.id
+
+        if (id == R.id.navigation_home) {
+            this@MainActivity.showDialog(
+                title = "Are You want to close App ?",
+                description = resources.getString(R.string.app_name),
+                titleOfPositiveButton = "Exit",
+                titleOfNegativeButton = "Cancel",
+                positiveButtonFunction = {
+                    exitProcess(0)
+                })
+
+        } else if(id==R.id.navigation_search_place_map) {
+            findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_home)
+        }else{
+            super.onBackPressed()
+        }
+
 
         SharedPreferencesUtil(this@MainActivity).saveHomeSelected(false)
     }
@@ -146,6 +177,46 @@ class MainActivity : AppCompatActivity() {
                 it.isExclusiveCheckable = true
             }
         }
+    }
+
+    fun Context.showDialog(
+        title: String,
+        description: String,
+        titleOfPositiveButton: String? = null,
+        titleOfNegativeButton: String? = null,
+        positiveButtonFunction: (() -> Unit)? = null,
+        negativeButtonFunction: (() -> Unit)? = null,
+        likeButtonFunction: (() -> Unit)? = null,
+    ) {
+        val dialog = Dialog(this, R.style.Theme_Dialog)
+        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.custom_exit_dialouge)
+        val dialogTitle = dialog.findViewById(R.id.tv_privacy) as AppCompatTextView
+        val dialogCloseButton = dialog.findViewById(R.id.exit_btn) as AppCompatButton
+        val dialogPositiveButton = dialog.findViewById(R.id.cancel_btn) as AppCompatButton
+        val dialogLikeButton = dialog.findViewById(R.id.btn_rate) as AppCompatButton
+
+        dialogTitle.text = title
+
+        titleOfPositiveButton?.let { dialogPositiveButton.text = it } ?: dialogPositiveButton.isGone
+        titleOfNegativeButton?.let { dialogCloseButton.text = it } ?: dialogCloseButton.isGone
+
+        dialogPositiveButton.setOnClickListener {
+            positiveButtonFunction?.invoke()
+            dialog.dismiss()
+
+        }
+        dialogCloseButton.setOnClickListener {
+            negativeButtonFunction?.invoke()
+            dialog.dismiss()
+        }
+        dialogLikeButton.setOnClickListener {
+            likeButtonFunction?.invoke()
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
 }

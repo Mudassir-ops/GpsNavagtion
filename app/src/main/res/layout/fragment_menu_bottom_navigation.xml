@@ -154,7 +154,6 @@
                     android:background="@drawable/rounded_circel_white_fill"
                     android:padding="@dimen/_8sdp"
                     android:src="@drawable/rate_us"
-
                     app:layout_constraintBottom_toTopOf="@+id/label_rate_us"
                     app:layout_constraintEnd_toStartOf="@+id/iv_share_app"
                     app:layout_constraintHorizontal_bias="0.5"

@@ -11,7 +11,7 @@ import com.codesk.gpsnavigation.databinding.NearbyplacesDetailItemLayoutBinding
 import com.codesk.gpsnavigation.model.datamodels.NearByPlacesDetailDataModel
 import com.codesk.gpsnavigation.utill.commons.NearbyPlacesDetailItemDiffCallback
 
-class NearByPlacesDetailItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
+class NearByPlacesDetailItemAdapter(mContext: Context, val callback: (Int,Double,Double,String) -> Unit) :
     RecyclerView.Adapter<NearByPlacesDetailItemAdapter.ViewHolder>() {
 
     private var TAG = "FamousPlacesItemAdapter"
@@ -29,7 +29,7 @@ class NearByPlacesDetailItemAdapter(mContext: Context, val callback: (Int) -> Un
 
     inner class ViewHolder(
         private val binding: NearbyplacesDetailItemLayoutBinding,
-        val callback: (Int) -> Unit
+        val callback: (Int,Double,Double,String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dataModel: NearByPlacesDetailDataModel, context: Context) {
             binding.apply {
@@ -41,8 +41,8 @@ class NearByPlacesDetailItemAdapter(mContext: Context, val callback: (Int) -> Un
                     .into(famousPlacesImageview)
 
 
-                famousPlacesImageview.setOnClickListener {
-                    callback.invoke(adapterPosition)
+                outerItemLayout.setOnClickListener {
+                    callback.invoke(adapterPosition,dataModel.latitude,dataModel.longitude,dataModel.cityName)
                 }
             }
         }

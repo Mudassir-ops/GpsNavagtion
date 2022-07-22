@@ -1,5 +1,7 @@
 package com.codesk.gpsnavigation.ui.fragments.menu
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.codesk.gpsnavigation.BuildConfig
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentMenuBottomNavigationBinding
 import com.codesk.gpsnavigation.model.adapters.ChildAdapter
 import com.codesk.gpsnavigation.model.adapters.SavedMapItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.SavedMapDataModel
-import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
 import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showDialog
 
 
@@ -26,6 +28,10 @@ class MenuBottomNavFragment : Fragment() {
     private lateinit var savedMapItemAdapter: SavedMapItemAdapter
     var searcItemList = ArrayList<SavedMapDataModel>()
 
+    var dbLatitude = 0.0
+    var dbLongitude = 0.0
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,7 +39,10 @@ class MenuBottomNavFragment : Fragment() {
         _binding = FragmentMenuBottomNavigationBinding.inflate(inflater, container, false)
 
         binding.apply {
-            savedMapItemAdapter = SavedMapItemAdapter(requireContext()) {
+            savedMapItemAdapter = SavedMapItemAdapter(requireContext()) { latitude, lngitude ->
+                dbLatitude = latitude
+                dbLongitude = lngitude
+
                 overlayLayout.visibility = View.VISIBLE
                 /* outerLayoutFamousPlacesDetail.backgroundTintList= ColorStateList.valueOf(Color.parseColor("#d8d8d8"))*/
             }
@@ -41,8 +50,8 @@ class MenuBottomNavFragment : Fragment() {
             //---actually show on map btn xml naming wrong
             ivSavedMap.setOnClickListener {
                 val bundle = Bundle()
-                bundle.putDouble(ChildAdapter.SelectedLatitude, 43.08287886692618)
-                bundle.putDouble(ChildAdapter.SelectedLngitude, -79.07416290191135)
+                bundle.putDouble(ChildAdapter.SelectedLatitude, dbLatitude)
+                bundle.putDouble(ChildAdapter.SelectedLngitude, dbLongitude)
                 findNavController().navigate(R.id.navigation_famousplaces_map, bundle)
             }
 
@@ -76,13 +85,94 @@ class MenuBottomNavFragment : Fragment() {
                     })
             }
 
+
+            ivShareApp.setOnClickListener {
+                val intent = Intent()
+                intent.action = Intent.ACTION_SEND
+                //intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Android Studio Pro");
+                intent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    """Hi dear I am using Charging Animation app, it has amazing effects and animations, Install and enjoy with Charging Animation 
+ https://play.google.com/store/apps/details?id=${requireContext().packageName}"""
+                )
+                intent.type = "text/plain"
+                startActivity(intent)
+            }
+            labelShareApp.setOnClickListener {
+                val intent = Intent()
+                intent.action = Intent.ACTION_SEND
+                //intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Android Studio Pro");
+                intent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    """Hi dear I am using Charging Animation app, it has amazing effects and animations, Install and enjoy with Charging Animation 
+ https://play.google.com/store/apps/details?id=${requireContext().packageName}"""
+                )
+                intent.type = "text/plain"
+                startActivity(intent)
+            }
+
+            ivRateUs.setOnClickListener {
+                try {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("market://details?id=" + requireContext().packageName)
+                    )
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data =
+                        Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID)
+                    startActivity(i)
+                }
+            }
+            labelRateUs.setOnClickListener {
+                try {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("market://details?id=" + requireContext().packageName)
+                    )
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data =
+                        Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID)
+                    startActivity(i)
+                }
+            }
+
+            ivShareMyLocation.setOnClickListener {
+                val uri = "https://www.google.com/maps/?q=$dbLatitude,$dbLongitude"
+                val sharingIntent = Intent(Intent.ACTION_SEND)
+                sharingIntent.type = "text/plain"
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, uri)
+                startActivity(Intent.createChooser(sharingIntent, "Share in..."))
+            }
+            labelShareMyLocation.setOnClickListener {
+                val uri = ("geo:" + dbLatitude + ","
+                        + dbLongitude + "?q=" + dbLatitude + "," + dbLongitude)
+                startActivity(
+                    Intent(
+                        Intent.ACTION_SEND,
+                        Uri.parse(uri)
+                    )
+                )
+            }
         }
 
 
-        viewModel.getAllSavedMap().observe(viewLifecycleOwner, Observer {
+        viewModel.getAllSavedMap().observe(viewLifecycleOwner, Observer { list ->
             searcItemList.clear()
-            it.map { searcItemList.add(SavedMapDataModel(cityName = "${it.savedPlaceName}", imageResource = R.drawable.dummy_map)) }
-            savedMapItemAdapter.setFamousPlacesitemList(searcItemList )
+            list.map {
+                searcItemList.add(
+                    SavedMapDataModel(
+                        cityName = "${it.savedPlaceName}",
+                        imageResource = R.drawable.dummy_map,
+                        it.savedPlaceLatitude,
+                        it.savedPlaceLongitude
+                    )
+                )
+            }
+            savedMapItemAdapter.setFamousPlacesitemList(searcItemList)
 
         })
 

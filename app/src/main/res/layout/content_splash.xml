@@ -5,21 +5,31 @@
     android:id="@+id/content_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_color"
+    android:background="@color/purple_200"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.activities.splash.SplashScreenActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/appCompatImageView"
-        android:layout_width="@dimen/_120sdp"
-        android:layout_height="@dimen/_130sdp"
-        android:layout_marginVertical="@dimen/_20sdp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_18sdp"
-        android:elevation="@dimen/_20sdp"
-        android:src="@drawable/gps_logo"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="@dimen/_30sdp"
         app:layout_constraintBottom_toTopOf="@+id/tv_splash_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_130sdp"
+            android:layout_margin="0dp"
+            android:elevation="@dimen/_50sdp"
+            android:src="@drawable/gps_logo" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_splash_label"
@@ -32,8 +42,8 @@
         android:textSize="@dimen/_18sdp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView"
-        app:layout_constraintStart_toStartOf="@+id/appCompatImageView"
+        app:layout_constraintEnd_toEndOf="@+id/cardview"
+        app:layout_constraintStart_toStartOf="@+id/cardview"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -49,12 +59,13 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/next_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
             android:layout_marginVertical="@dimen/_10sdp"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_forward"
+            android:rotation="220"
             android:visibility="gone"
+            android:src="@drawable/show_on_the_map"
             app:layout_constraintBottom_toTopOf="@+id/get_statted_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -69,7 +80,7 @@
             android:indeterminate="true"
             android:indeterminateDuration="3000"
             android:max="100"
-            android:progress="70"
+            android:progress="60"
             android:visibility="visible"
             app:indicatorColor="@color/white"
             app:indicatorSize="@dimen/_60sdp"
@@ -86,6 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/_10sdp"
             android:text="Get Started"
+            android:visibility="gone"
             android:textColor="@color/white"
             android:textSize="@dimen/_16sdp"
             app:layout_constraintBottom_toBottomOf="parent"

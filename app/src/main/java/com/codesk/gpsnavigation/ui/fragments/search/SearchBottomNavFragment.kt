@@ -20,21 +20,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentSearchBottomNavigationBinding
 import com.codesk.gpsnavigation.model.adapters.SearchItemAdapter
+import com.codesk.gpsnavigation.model.datamodels.SavedRecentMapTable
 import com.codesk.gpsnavigation.model.datamodels.SearchItemDataModel
 import com.codesk.gpsnavigation.ui.fragments.nearby.NearbyBottomNavFragment.Companion.TAG
 import com.codesk.gpsnavigation.utill.commons.AppConstants
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.observeOnce
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showNoInternetDialog
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.gson.JsonObject
@@ -47,6 +56,11 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 
@@ -55,10 +69,10 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
 
     private val REQUEST_CODE_AUTOCOMPLETE = 1
     private var home: CarmenFeature? = null
+    private var test: CarmenFeature? = null
     private var work: CarmenFeature? = null
     private val geojsonSourceLayerId = "geojsonSourceLayerId"
     private val symbolIconId = "symbolIconId"
-
 
     private val RECORD_AUDIO_REQUEST_CODE = 101
     private var mCurrentLocation: Location? = null
@@ -70,6 +84,10 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentSearchBottomNavigationBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: SearchBottomNavViewModel by viewModels()
+
+
+    var sizeOfRecentList=-1
 
     var latitude: Double? = 33.51677995083078
     var lngitude: Double? = 73.15474762784669
@@ -86,18 +104,20 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
         Mapbox.getInstance(getApplicationContext(), getString(R.string.mapbox_access_token))
         _binding = FragmentSearchBottomNavigationBinding.inflate(inflater, container, false)
 
+        val livedata =
+            viewModel.getAllRecentMap()
+
         binding.headerLayout.backImageview.visibility = View.VISIBLE
         binding.apply {
-
             binding.headerLayout.searchTextview.setOnClickListener {
                 initSearch()
             }
 
-            adapterSearchItemAdapter = SearchItemAdapter(requireContext()) {
+            adapterSearchItemAdapter = SearchItemAdapter(requireContext()) { pos, lat, lng, pname ->
                 val bundle = Bundle()
-                bundle.putDouble(SEARCHEDLATITUDE, latitude!!)
-                bundle.putDouble(SEARCHEDLONGITUDE, lngitude!!)
-                bundle.putString(SEARCHEDNAME, placeName!!)
+                bundle.putDouble(SEARCHEDLATITUDE, lat)
+                bundle.putDouble(SEARCHEDLONGITUDE, lng)
+                bundle.putString(SEARCHEDNAME, pname)
                 findNavController().navigate(R.id.navigation_search_places_map, bundle)
 
             }
@@ -125,18 +145,10 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                             positiveButtonFunction = {
                                 getPermissionToRecordAudio()
                             },
-
                             )
-
-
                     }
-
-
                 }
             }
-
-
-
 
             headerLayout.searchTextview.addTextChangedListener(object :
                 TextWatcher {
@@ -165,10 +177,35 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                 }
             })
             btnRecentSearch.setOnClickListener {
-                adapterSearchItemAdapter.setSearchitemList(gerSearchData())
+                searcItemList.clear()
+                livedata
+                    .observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer { list ->
+                        Log.d(TAG, "onCreateView: ${list.size}")
+                        list.map {
+                            searcItemList.add(
+                                SearchItemDataModel(
+                                    cityName = it.savedPlaceName,
+                                    savedPlaceLatitude = it.savedPlaceLatitude,
+                                    savedPlaceLongitude = it.savedPlaceLongitude
+                                )
+                            )
+                        }
+
+                        if(searcItemList.size>2){
+                            adapterSearchItemAdapter.setSearchitemList(searcItemList.reversed() as ArrayList<SearchItemDataModel>)
+                        }else{
+                            adapterSearchItemAdapter.setSearchitemList(searcItemList)
+                        }
+                    })
             }
+
             btnClearSearch.setOnClickListener {
                 searcItemList.clear()
+                CoroutineScope(IO).launch {
+                    withContext(Main) {
+                        viewModel.deleteRecentMapTable()
+                    }
+                }
                 adapterSearchItemAdapter.setSearchitemList(searcItemList)
             }
 
@@ -177,18 +214,35 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
             }
 
         }
-        adapterSearchItemAdapter.setSearchitemList(gerSearchData())
+
+
+        searcItemList.clear()
+        livedata
+            .observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer { list ->
+                Log.d(TAG, "onCreateView: ${list.size}")
+                list.map {
+                    searcItemList.add(
+                        SearchItemDataModel(
+                            cityName = it.savedPlaceName,
+                            savedPlaceLatitude = it.savedPlaceLatitude,
+                            savedPlaceLongitude = it.savedPlaceLongitude
+                        )
+                    )
+                }
+
+
+                if(searcItemList.size>2){
+                    adapterSearchItemAdapter.setSearchitemList(searcItemList.reversed() as ArrayList<SearchItemDataModel>)
+                }else{
+                    adapterSearchItemAdapter.setSearchitemList(searcItemList)
+                }
+
+            })
+
+
         return binding.root
     }
 
-    private fun gerSearchData(): ArrayList<SearchItemDataModel> {
-        searcItemList.clear()
-        searcItemList.add(SearchItemDataModel(cityName = "Zaraj"))
-        searcItemList.add(SearchItemDataModel(cityName = "Zaraj"))
-        searcItemList.add(SearchItemDataModel(cityName = "Rawalpindi"))
-
-        return searcItemList
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -198,8 +252,24 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         if (AppConstants.mCurrentLocation == null) {
-            setUpLocationListener()
+            if (CommonFunctions.checkForInternet(requireContext())) {
+                setUpLocationListener()
+            } else {
+                requireContext().showNoInternetDialog(
+                    title = "Privacy Policy",
+                    description = "",
+                    titleOfPositiveButton = "",
+                    titleOfNegativeButton = "",
+                    positiveButtonFunction = {
+                        val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                        startActivityForResult(panelIntent, 402)
+                    }
+                )
+            }
+
         }
+
+        binding.headerLayout.searchTextview.setText("")
 
     }
 
@@ -289,7 +359,7 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
         } else if (requestCode == REQUEST_CODE_AUTOCOMPLETE && resultCode == AppCompatActivity.RESULT_OK) {
             val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
             binding.headerLayout.searchTextview.setText(selectedCarmenFeature.text())
-            placeName=selectedCarmenFeature.text()
+            placeName = selectedCarmenFeature.text()
 
             val searchedLatLng = LatLng(
                 (selectedCarmenFeature.geometry() as Point?)!!.latitude(),
@@ -298,6 +368,41 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
             latitude = searchedLatLng.latitude
             lngitude = searchedLatLng.longitude
 
+            val bundle = Bundle()
+            bundle.putDouble(SEARCHEDLATITUDE, searchedLatLng.latitude)
+            bundle.putDouble(SEARCHEDLONGITUDE, searchedLatLng.longitude)
+            bundle.putString(SEARCHEDNAME, selectedCarmenFeature.text())
+            findNavController().navigate(R.id.navigation_search_places_map, bundle)
+
+            viewModel.getAllRecentMap().observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer {
+                sizeOfRecentList=it.size
+            })
+            if(sizeOfRecentList<6){
+                CoroutineScope(IO).launch {
+                    withContext(Main) {
+                        val savedRecentMapTable = SavedRecentMapTable(
+                            savedPlaceName = placeName!!,
+                            savedPlaceLatitude = latitude,
+                            savedPlaceLongitude = lngitude
+                        )
+                        viewModel.insertRecentMap(
+                            savedRecentMapTable
+                        )
+                    }
+                }
+            }else {
+                 viewModel.updateRecentMap(
+                     savedPlaceName = placeName!!,
+                     savedPlaceLatitude = latitude!!,
+                     savedPlaceLongitude = lngitude!!,
+                     savedPlaceID = 1
+                 )
+            }
+
+
+
+        } else if (requestCode == 402) {
+            setUpLocationListener()
         }
     }
 
@@ -436,10 +541,7 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    override fun onMapReady(mapboxMap: MapboxMap) {
-
-    }
-
+    override fun onMapReady(mapboxMap: MapboxMap) {}
     private fun initSearch() {
         addUserLocations()
         val intent = PlaceAutocomplete.IntentBuilder().accessToken(
@@ -454,6 +556,7 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                     .build(PlaceOptions.MODE_CARDS)
             )
             .build(requireActivity())
+        intent.putExtra("dasdsa","asdsa")
         startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE)
 
     }
@@ -472,6 +575,15 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
             .id("mapbox-dc")
             .properties(JsonObject())
             .build()
+    }
+
+    private fun performSearch() {
+        binding.headerLayout.searchTextview.clearFocus()
+        val `in`: InputMethodManager? =requireContext().
+        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        `in`!!.hideSoftInputFromWindow( binding.headerLayout.searchTextview.getWindowToken(), 0)
+        //...perform search
+
     }
 
 }

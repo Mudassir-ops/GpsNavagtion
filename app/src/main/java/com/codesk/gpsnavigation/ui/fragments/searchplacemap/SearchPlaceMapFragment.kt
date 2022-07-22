@@ -11,25 +11,31 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentSearchPlaceMapBinding
 import com.codesk.gpsnavigation.model.adapters.TrvellingModeItemAdapter
+import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
 import com.codesk.gpsnavigation.model.datamodels.TravellingModeDataModel
-import com.codesk.gpsnavigation.ui.fragments.search.SearchBottomNavFragment
+import com.codesk.gpsnavigation.ui.fragments.famousplacesmap.FamousPlaceMapFragmentViewModel
 import com.codesk.gpsnavigation.ui.fragments.searchplacesmap.SearchPlacesMapFragment
 import com.codesk.gpsnavigation.utill.commons.AppConstants
 import com.codesk.gpsnavigation.utill.commons.AppConstants.Companion.mCurrentLocation
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions
+import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showNoInternetDialog
 import com.google.gson.JsonObject
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.api.directions.v5.DirectionsCriteria
@@ -65,10 +71,12 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.mapbox.mapboxsdk.utils.BitmapUtils
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions
-import com.mapbox.services.android.navigation.ui.v5.NavigationViewOptions
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute
-import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgressState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -85,6 +93,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var trvellingModeItemAdapter: TrvellingModeItemAdapter
     var searcItemList = ArrayList<TravellingModeDataModel>()
 
+    private val viewModel: FamousPlaceMapFragmentViewModel by viewModels()
 
     private var locationComponent: LocationComponent? = null
     private var isInTrackingMode = false
@@ -121,29 +130,89 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
         selectedPlaceName=requireArguments().getString(SearchPlacesMapFragment.SEARCHEDNAME,"")
 
         binding.apply {
-            placeName.text= selectedPlaceName
+            placeName.text = selectedPlaceName
 
-            mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
-                SearchPlaceMapFragment.mapboxMap = mapboxMap
-                mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
-                    origin =
-                        Point.fromLngLat(mCurrentLocation!!.longitude, mCurrentLocation!!.latitude)
-                    destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
-                    enableLocationComponent(style)
-                    initSource(style)
-                    initLayers(style)
-                    getRoute(mapboxMap, origin, destination, DirectionsCriteria.PROFILE_DRIVING)
-                }
-            })
+
+            binding.searchTextview.setOnClickListener {
+                initSearchFab()
+            }
+
+            /*     binding.searchTextview.setOnEditorActionListener { _, actionId, _ ->
+                     if (actionId == EditorInfo.IME_ACTION_DONE) {
+                         performSearch()
+                         Toast.makeText(requireContext(), "searchaction done clciked", Toast.LENGTH_SHORT).show()
+                     }
+                     true
+                 }*/
+
+
+
+
+
+            if (CommonFunctions.checkForInternet(requireContext())) {
+                mapView!!.getMapAsync(OnMapReadyCallback { mapboxMap ->
+                    SearchPlaceMapFragment.mapboxMap = mapboxMap
+                    mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+                        origin =
+                            Point.fromLngLat(
+                                mCurrentLocation!!.longitude,
+                                mCurrentLocation!!.latitude
+                            )
+                        destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
+                        enableLocationComponent(style)
+                        initSource(style)
+                        initLayers(style)
+                        getRoute(mapboxMap, origin, destination, DirectionsCriteria.PROFILE_DRIVING)
+                    }
+                })
+            } else {
+                requireContext().showNoInternetDialog(
+                    title = "Privacy Policy",
+                    description = "",
+                    titleOfPositiveButton = "",
+                    titleOfNegativeButton = "",
+                    positiveButtonFunction = {
+                        val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                        startActivityForResult(panelIntent, 402)
+                    }
+                )
+
+            }
+
+            //---wrong name actually refresh button
+            tvVehicleSpeed.setOnClickListener {
+                mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
+                    SearchPlaceMapFragment.mapboxMap = mapboxMap
+                    mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+                        origin =
+                            Point.fromLngLat(
+                                mCurrentLocation!!.longitude,
+                                mCurrentLocation!!.latitude
+                            )
+                        destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
+                        enableLocationComponent(style)
+                        initSource(style)
+                        initLayers(style)
+                        getRoute(mapboxMap, origin, destination, DirectionsCriteria.PROFILE_DRIVING)
+                    }
+                })
+
+            }
 
             ivNavigateOut.setOnClickListener {
                 val permissionCheck =
-                    ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_PHONE_STATE)
+                    ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.READ_PHONE_STATE
+                    )
 
                 if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                     requestReadPhoneStatePermission(requireActivity())
                 } else {
-                    val originPoint = Point.fromLngLat(AppConstants.mCurrentLocation!!.longitude, AppConstants.mCurrentLocation!!.latitude)
+                    val originPoint = Point.fromLngLat(
+                        AppConstants.mCurrentLocation!!.longitude,
+                        AppConstants.mCurrentLocation!!.latitude
+                    )
                     val destinationPoint = Point.fromLngLat(selectedLongitude, selectedLatitude)
                     NavigationRoute.builder(requireContext())
                         .accessToken(Mapbox.getAccessToken()!!)
@@ -178,44 +247,6 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                             }
                         })
                 }
-
-              /*  val originPoint = Point.fromLngLat(AppConstants.mCurrentLocation!!.longitude, AppConstants.mCurrentLocation!!.latitude)
-                val destinationPoint = Point.fromLngLat(selectedLongitude, selectedLatitude)
-                NavigationRoute.builder(requireContext())
-                    .accessToken(Mapbox.getAccessToken()!!)
-                    .origin(originPoint)
-                    .destination(destinationPoint)
-                    .build()
-                    .getRoute(object : Callback<DirectionsResponse?> {
-                        override fun onResponse(
-                            call: Call<DirectionsResponse?>?,
-                            response: Response<DirectionsResponse?>
-                        ) {
-                            val currentRoute = response.body()!!.routes()[0]
-                            val options = NavigationLauncherOptions.builder()
-                                .directionsRoute(currentRoute)
-                                .shouldSimulateRoute(false)
-                                .build()
-                            NavigationLauncher.startNavigation(requireActivity(), options)
-
-                             val optionsNavigate = NavigationViewOptions.builder()
-                             optionsNavigate.progressChangeListener { location, routeProgress ->
-                                 Log.v("RES", routeProgress.currentState().toString())
-                                 if (routeProgress.currentState() == RouteProgressState.ROUTE_ARRIVED) {
-                                     Toast.makeText(requireContext(), "Arrived", Toast.LENGTH_SHORT).show()
-                                     Log.d("Arrived", "onResponse: Arrived")
-                                 }
-                             }
-                        }
-
-                        override fun onFailure(
-                            call: Call<DirectionsResponse?>?,
-                            throwable: Throwable?
-                        ) {
-                        }
-                    })*/
-
-
             }
 
 
@@ -223,59 +254,104 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                 initSearchFab()
             }
             trvellingModeItemAdapter = TrvellingModeItemAdapter(requireContext()) {
-
                 when (it) {
                     0 -> {
-                        mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
-                            mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
-                                origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
-                                destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
+                        if (CommonFunctions.checkForInternet(requireContext())) {
+                            binding.mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
+                                mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+                                    origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
+                                    destination =
+                                        Point.fromLngLat(selectedLongitude, selectedLatitude)
 
-                                initSource(style)
-                                initLayers(style)
-                                getRoute(
-                                    mapboxMap,
-                                    origin,
-                                    destination,
-                                    DirectionsCriteria.PROFILE_DRIVING
-                                )
-                            }
-                        })
+                                    initSource(style)
+                                    initLayers(style)
+                                    getRoute(
+                                        mapboxMap,
+                                        origin,
+                                        destination,
+                                        DirectionsCriteria.PROFILE_DRIVING
+                                    )
+                                }
+                            })
+                        } else {
+                            requireContext().showNoInternetDialog(
+                                title = "Privacy Policy",
+                                description = "",
+                                titleOfPositiveButton = "",
+                                titleOfNegativeButton = "",
+                                positiveButtonFunction = {
+                                    val panelIntent =
+                                        Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                                    startActivityForResult(panelIntent, 402)
+                                }
+                            )
+                        }
 
                     }
                     1 -> {
-                        mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
-                            mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
-                                origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
-                                destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
+                        if (CommonFunctions.checkForInternet(requireContext())) {
+                            binding.mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
+                                mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+                                    origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
+                                    destination =
+                                        Point.fromLngLat(selectedLongitude, selectedLatitude)
 
-                                initSource(style)
-                                initLayers(style)
-                                getRoute(
-                                    mapboxMap,
-                                    origin,
-                                    destination,
-                                    DirectionsCriteria.PROFILE_CYCLING
-                                )
-                            }
-                        })
+                                    initSource(style)
+                                    initLayers(style)
+                                    getRoute(
+                                        mapboxMap,
+                                        origin,
+                                        destination,
+                                        DirectionsCriteria.PROFILE_CYCLING
+                                    )
+                                }
+                            })
+                        } else {
+                            requireContext().showNoInternetDialog(
+                                title = "No Internet Dailouge",
+                                description = "",
+                                titleOfPositiveButton = "",
+                                titleOfNegativeButton = "",
+                                positiveButtonFunction = {
+                                    val panelIntent =
+                                        Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                                    startActivityForResult(panelIntent, 402)
+                                }
+                            )
+                        }
                     }
-                    else -> {
-                        mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
-                            mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
-                                origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
-                                destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
+                    2 -> {
+                        if (CommonFunctions.checkForInternet(requireContext())) {
+                            binding.mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
+                                mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+                                    origin = Point.fromLngLat(73.1970709610506, 33.488719745423296)
+                                    destination =
+                                        Point.fromLngLat(selectedLongitude, selectedLatitude)
 
-                                initSource(style)
-                                initLayers(style)
-                                getRoute(
-                                    mapboxMap,
-                                    origin,
-                                    destination,
-                                    DirectionsCriteria.PROFILE_WALKING
-                                )
-                            }
-                        })
+                                    initSource(style)
+                                    initLayers(style)
+                                    getRoute(
+                                        mapboxMap,
+                                        origin,
+                                        destination,
+                                        DirectionsCriteria.PROFILE_WALKING
+                                    )
+                                }
+                            })
+                        } else {
+                            requireContext().showNoInternetDialog(
+                                title = "No Internet",
+                                description = "",
+                                titleOfPositiveButton = "",
+                                titleOfNegativeButton = "",
+                                positiveButtonFunction = {
+                                    val panelIntent =
+                                        Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                                    startActivityForResult(panelIntent, 402)
+                                }
+                            )
+                        }
+
                     }
 
                 }
@@ -290,12 +366,28 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
             ivSaveMap.setOnClickListener {
                 requireContext().showDialog(
                     title = "Save Map",
-                    description = resources.getString(R.string.text_privacy_policy),
+                    description = "$selectedPlaceName",
                     titleOfPositiveButton = "Cancel",
                     titleOfNegativeButton = "Save",
                     positiveButtonFunction = {
 
+                        CoroutineScope(Dispatchers.IO).launch {
+                            withContext(Dispatchers.Main) {
+                                viewModel.insertSavedMap(
+                                    savedMapTable = SavedMapTable(
+                                        savedPlaceName = it,
+                                        savedPlaceLatitude = selectedLatitude,
+                                        savedPlaceLongitude = selectedLongitude
+                                    )
+                                )
+                            }
+                        }
+                        CommonFunctions.showMessage(
+                            binding.root,
+                            "$it Saved in Your Saved Maps"
+                        )
                     })
+
             }
         }
         trvellingModeItemAdapter.setTravellingModeitemList(getTravellingModeList())
@@ -348,7 +440,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
         description: String,
         titleOfPositiveButton: String? = null,
         titleOfNegativeButton: String? = null,
-        positiveButtonFunction: (() -> Unit)? = null,
+        positiveButtonFunction: ((placeName: String) -> Unit)? = null,
         negativeButtonFunction: (() -> Unit)? = null
     ) {
         val dialog = Dialog(this, R.style.Theme_Dialog)
@@ -357,11 +449,15 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.save_map_dialouge_layout)
 
-        val dialogPositiveButton = dialog.findViewById(R.id.btn_cancel) as AppCompatButton
-        val dialogNegativeButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
+        val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
+        val dialogNegativeButton = dialog.findViewById(R.id.btn_cancel) as AppCompatButton
+
+        val dialogEdttextPlaceName = dialog.findViewById(R.id.edt_save_title) as EditText
+
+        dialogEdttextPlaceName.setText(description)
 
         dialogPositiveButton.setOnClickListener {
-            positiveButtonFunction?.invoke()
+            positiveButtonFunction?.invoke(dialogEdttextPlaceName.getText().toString())
             dialog.dismiss()
         }
         dialogNegativeButton.setOnClickListener {
@@ -516,15 +612,10 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                     )
                 }
 
-
             }
 
             override fun onFailure(call: Call<DirectionsResponse?>, throwable: Throwable) {
                 Timber.e("Error: " + throwable.message)
-                Toast.makeText(
-                    requireContext(), "Error: " + throwable.message,
-                    Toast.LENGTH_SHORT
-                ).show()
             }
         })
     }
@@ -702,6 +793,19 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                     )
                 }
             }
+        } else if (requestCode == 402) {
+            binding.mapView!!.getMapAsync(OnMapReadyCallback { mapboxMap ->
+                SearchPlaceMapFragment.mapboxMap = mapboxMap
+                mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+                    origin =
+                        Point.fromLngLat(mCurrentLocation!!.longitude, mCurrentLocation!!.latitude)
+                    destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
+                    enableLocationComponent(style)
+                    initSource(style)
+                    initLayers(style)
+                    getRoute(mapboxMap, origin, destination, DirectionsCriteria.PROFILE_DRIVING)
+                }
+            })
         }
     }
  private  fun requestReadPhoneStatePermission(activity: Activity?) {
@@ -722,5 +826,6 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
+
 
 }

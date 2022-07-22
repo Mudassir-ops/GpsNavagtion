@@ -8,9 +8,11 @@ import androidx.room.TypeConverters
 import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
 import com.codesk.gpsnavigation.utill.commons.AppConstants.Companion.APP_DATABASE
 import com.codesk.gpsnavigation.data.local.dao.SavedMapDao
+import com.codesk.gpsnavigation.data.local.dao.SavedRecentMapDao
+import com.codesk.gpsnavigation.model.datamodels.SavedRecentMapTable
 
 @Database(
-    entities = [SavedMapTable::class],
+    entities = [SavedMapTable::class,SavedRecentMapTable::class],
     version = 1,
     exportSchema = true
 )
@@ -19,6 +21,7 @@ import com.codesk.gpsnavigation.data.local.dao.SavedMapDao
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun savedMapDao(): SavedMapDao
+    abstract fun savedRecentMapDao(): SavedRecentMapDao
 
     companion object {
         @Volatile

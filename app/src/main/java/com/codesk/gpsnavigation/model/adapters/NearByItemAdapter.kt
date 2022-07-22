@@ -33,7 +33,6 @@ class NearByItemAdapter(mContext: Context, val callback: (Int, String) -> Unit) 
         notifyDataSetChanged()
     }
 
-
     inner class ViewHolder(
         private val binding: NearbyItemLayoutBinding,
         val callback: (Int, String) -> Unit

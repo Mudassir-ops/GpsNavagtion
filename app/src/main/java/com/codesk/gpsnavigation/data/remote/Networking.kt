@@ -14,7 +14,7 @@ class Networking {
     companion object {
         private const val NETWORK_CALL_TIMEOUT = 60
         private var retrofit: Retrofit? = null
-        private val BASE_URL = "https://api.mapbox.com/geocoding/v5/"
+        private val BASE_URL = "https://api.mapbox.com/geocoding/v5/mapbox.places/"
 
         fun getRetrofitInstance(): ApiServices? {
             if (retrofit == null) {

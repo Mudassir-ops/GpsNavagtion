@@ -14,6 +14,7 @@ import com.codesk.gpsnavigation.databinding.FragmentNearByPlacesDetailBinding
 import com.codesk.gpsnavigation.model.adapters.NearByPlacesDetailItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.NearByPlacesDetailDataModel
 import com.codesk.gpsnavigation.ui.fragments.nearby.NearbyBottomNavFragment
+import com.codesk.gpsnavigation.utill.commons.AppConstants
 import com.mapbox.geojson.Point
 import com.mapbox.search.*
 import com.mapbox.search.result.SearchResult
@@ -65,6 +66,8 @@ class NearByPlacesDetailFragment : Fragment() {
                                         it.requestOptions.options.proximity!!.longitude()
                                     )
                                 )
+
+                                Log.d("asdsadsad", "onSuggestions: $it")
                             } else {
                                 searcItemList.add(
                                     NearByPlacesDetailDataModel(
@@ -122,7 +125,7 @@ class NearByPlacesDetailFragment : Fragment() {
                                         cityName = "${it.name}",
                                         R.drawable.hospital, it.address!!.street!!,
                                         it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.,
+                                        it.requestOptions.options.proximity!!.longitude(),
 
                                     )
                                 )
@@ -937,15 +940,9 @@ class NearByPlacesDetailFragment : Fragment() {
 
         })
 
-        searchRequestTask = searchEngine.search(
-            "$selectedTypeName",
-            SearchOptions(
-                limit = 5,
-                proximity = Point.fromLngLat(72.94574397437496, 33.61620668993463)
-            ),
+        searchRequestTask = searchEngine.search("$selectedTypeName", SearchOptions(limit = 5, proximity = Point.fromLngLat(AppConstants.mCurrentLocation!!.longitude, AppConstants.mCurrentLocation!!.latitude)),
             searchCallback
         )
-
 
         binding.apply {
             headerLayoutsecond.labelSavedMap.text = selectedTypeName

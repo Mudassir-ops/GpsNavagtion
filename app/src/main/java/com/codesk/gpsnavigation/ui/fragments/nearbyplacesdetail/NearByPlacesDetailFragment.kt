@@ -1,10 +1,15 @@
 package com.codesk.gpsnavigation.ui.fragments.nearbyplacesdetail
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -15,10 +20,14 @@ import com.codesk.gpsnavigation.model.adapters.NearByPlacesDetailItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.NearByPlacesDetailDataModel
 import com.codesk.gpsnavigation.ui.fragments.nearby.NearbyBottomNavFragment
 import com.codesk.gpsnavigation.utill.commons.AppConstants
+import com.mapbox.api.geocoding.v5.MapboxGeocoding
+import com.mapbox.api.geocoding.v5.models.CarmenFeature
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse
 import com.mapbox.geojson.Point
-import com.mapbox.search.*
-import com.mapbox.search.result.SearchResult
-import com.mapbox.search.result.SearchSuggestion
+import com.mapbox.mapboxsdk.Mapbox
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class NearByPlacesDetailFragment : Fragment() {
@@ -33,930 +42,106 @@ class NearByPlacesDetailFragment : Fragment() {
 
     var selectedTypeName = ""
     var SELECTEDPPOSITION = -1
+    var SELECTEDImageResId = -1
 
 
     var latitude = 0.0
     var longitude = 0.0
     var palce = ""
 
-    //---search suggesion list near by
-    private lateinit var searchEngine: SearchEngine
-    private lateinit var searchRequestTask: SearchRequestTask
-    private val searchCallback = object : SearchSelectionCallback {
-
-        override fun onSuggestions(
-            suggestions: List<SearchSuggestion>,
-            responseInfo: ResponseInfo
-        ) {
-            viewModel.showProgressBar.value = false
-            if (suggestions.isEmpty()) {
-                Log.i("SearchApiExample", "No suggestions found")
-            } else {
-                Log.d("sadasdasd", "onSuggestions:$suggestions ")
-                searcItemList.clear()
-                when (SELECTEDPPOSITION) {
-                    0 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.airplane, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-
-                                Log.d("asdsadsad", "onSuggestions: $it")
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.airplane, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-                        }
-
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    1 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.petrol_stattion, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.petrol_stattion, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    2 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.hospital, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.hospital, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude(),
-
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    3 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.bank, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.bank, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    4 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.realestate, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.realestate, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    5 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.furniture, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.furniture, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    6 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.computer, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.computer, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    7 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.electronics, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.electronics, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    8 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.resturant, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.resturant, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    9 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.pet, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.pet, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    10 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.forest, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.forest, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    11 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.cafeteria, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.cafeteria, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    12 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.court, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.court, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    13 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.bakery, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.bakery, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    14 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.shop, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.shop, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    15 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.library, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.library, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    16 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.glass_shop, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.glass_shop, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    17 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.gym, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.gym, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    18 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = it.name,
-                                        R.drawable.salon_shop, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = it.name,
-                                        R.drawable.salon_shop, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    19 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.carpenter, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.carpenter, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    20 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.post_office, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.post_office, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    21 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.hardware, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.hardware, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    22 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.pharmacy, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.pharmacy, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    23 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    24 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.ambulance, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.ambulance, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    25 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.water, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.water, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    26 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    27 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.university, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    28 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.painter, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.painter, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    29 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.cineam, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.cineam, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    30 -> {
-                        suggestions.map {
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.jewelery, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.jewelery, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                    31 -> {
-                        suggestions.map {
-
-                            if (it.address!!.street.isNullOrEmpty()) {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.taxi, it.address!!.country!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            } else {
-                                searcItemList.add(
-                                    NearByPlacesDetailDataModel(
-                                        cityName = "${it.name}",
-                                        R.drawable.taxi, it.address!!.street!!,
-                                        it.requestOptions.options.proximity!!.latitude(),
-                                        it.requestOptions.options.proximity!!.longitude()
-                                    )
-                                )
-                            }
-
-
-                        }
-                        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
-                    }
-                }
-                searchRequestTask = searchEngine.select(suggestions.first(), this)
-            }
-        }
-
-        override fun onResult(
-            suggestion: SearchSuggestion,
-            result: SearchResult,
-            responseInfo: ResponseInfo
-        ) {
-            Log.i("SearchApiExample", "Search result: $result")
-        }
-
-        override fun onCategoryResult(
-            suggestion: SearchSuggestion,
-            results: List<SearchResult>,
-            responseInfo: ResponseInfo
-        ) {
-
-            Log.i("SearchpleCatagorey", "Category search results: $results")
-        }
-
-        override fun onError(e: Exception) {
-            Log.i("SearchApiExample", "Search error", e)
-        }
-    }
-
-    //---search suggesion list near by
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        searchEngine = MapboxSearchSdk.createSearchEngineWithBuiltInDataProviders(
-            SearchEngineSettings(resources.getString(R.string.mapbox_access_token))
-        )
+        Mapbox.getInstance(requireContext(), getString(R.string.mapbox_access_token));
         _binding = FragmentNearByPlacesDetailBinding.inflate(inflater, container, false)
         selectedTypeName = arguments?.getString(NearbyBottomNavFragment.SELECTEDTYPE, "")!!
         SELECTEDPPOSITION = arguments?.getInt(NearbyBottomNavFragment.SELECTEDPPOSITION, -1)!!
-        Log.d("SelcetedTypeQuery", "onCreateView: $selectedTypeName")
-        viewModel.showProgressBar.value = true
+        SELECTEDImageResId = arguments?.getInt(NearbyBottomNavFragment.SELECTEDIAMGERESID, -1)!!
 
+        viewModel.showProgressBar.value = true
         viewModel.showProgressBar.observe(viewLifecycleOwner, Observer {
             if (it) {
-                binding.circularProgressIndicatr.visibility=View.VISIBLE
+                binding.circularProgressIndicatr.visibility = View.VISIBLE
             } else {
-                binding.circularProgressIndicatr.visibility=View.GONE
+                binding.circularProgressIndicatr.visibility = View.GONE
             }
-
         })
 
-        searchRequestTask = searchEngine.search("$selectedTypeName", SearchOptions(limit = 5, proximity = Point.fromLngLat(AppConstants.mCurrentLocation!!.longitude, AppConstants.mCurrentLocation!!.latitude)),
-            searchCallback
-        )
+        val mapboxGeocoding = MapboxGeocoding.builder()
+            .accessToken(resources.getString(R.string.mapbox_access_token))
+            .query(selectedTypeName)
+            .proximity(
+                Point.fromLngLat(
+                    AppConstants.mCurrentLocation!!.longitude,
+                    AppConstants.mCurrentLocation!!.latitude
+                )
+            )
+            .build()
 
+        mapboxGeocoding.enqueueCall(object : Callback<GeocodingResponse> {
+            override fun onResponse(
+                call: Call<GeocodingResponse>,
+                response: Response<GeocodingResponse>
+            ) {
+
+                viewModel.showProgressBar.value = false
+                val results = response.body()!!.features()
+                if (results.size > 0) {
+                    setApiData(results, SELECTEDImageResId)
+                } else {
+                    val dialog = Dialog(requireActivity(), R.style.Theme_Dialog)
+                    dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
+                    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    dialog.setCancelable(true)
+                    dialog.setContentView(R.layout.no_map_saved_dialouge)
+                    val btnCancel = dialog.findViewById(R.id.btn_save) as AppCompatButton
+                    val tvText = dialog.findViewById(R.id.edt_save_title) as AppCompatTextView
+                    tvText.text = "NO Matching Result Found"
+                    btnCancel.setOnClickListener {
+                        dialog.dismiss()
+                    }
+                    dialog.show()
+
+                }
+            }
+
+            override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
+                val dialog = Dialog(requireContext(), R.style.Theme_Dialog)
+                dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog.setCancelable(true)
+                dialog.setContentView(R.layout.no_map_saved_dialouge)
+                val btnCancel = dialog.findViewById(R.id.btn_save) as AppCompatButton
+                val tvText = dialog.findViewById(R.id.edt_save_title) as AppCompatTextView
+                tvText.text = "failed to connect to api.mapbox.com \n" +
+                        " Check Internet Stability"
+                btnCancel.setOnClickListener {
+                    dialog.dismiss()
+                }
+                dialog.show()
+                viewModel.showProgressBar.value = false
+                throwable.printStackTrace()
+            }
+        })
         binding.apply {
             headerLayoutsecond.labelSavedMap.text = selectedTypeName
             headerLayoutsecond.backImageview.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_nearby_place_detail, true)
                 findNavController().navigate(R.id.navigation_nearby)
-
             }
 
+            headerLayoutsecond.image.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_nearby_place_detail, true)
+                findNavController().popBackStack(R.id.navigation_nearby, true)
+                findNavController().navigate(R.id.navigation_menu)
+            }
             binding.showOnTheMapLayoutRight.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putDouble(SelectedLatitude, latitude)
                 bundle.putDouble(SelectedLngitude, longitude)
                 bundle.putString(SelectedPlaceNAME, palce)
-                findNavController().navigate(R.id.navigation_famousplaces_map, bundle)
+                findNavController().navigate(R.id.navigation_nearby_places_map, bundle)
             }
 
             nearByPlacesDetailItemAdapter =
@@ -964,6 +149,7 @@ class NearByPlacesDetailFragment : Fragment() {
                     latitude = lat
                     longitude = lng
                     palce = placeName
+                    binding.tvPlaceName.text = placeName
                     overlayLayout.visibility = View.VISIBLE
                 }
             rvNearByPlaceDetail.apply {
@@ -987,7 +173,6 @@ class NearByPlacesDetailFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        searchRequestTask.cancel()
         _binding = null
     }
 
@@ -995,6 +180,34 @@ class NearByPlacesDetailFragment : Fragment() {
         val SelectedLatitude = "SelectedLatitude"
         val SelectedLngitude = "SelectedLngitude"
         val SelectedPlaceNAME = "SelectedPlaceNAME"
+        const val TAG = "NearByPlaceDetailFrag"
     }
 
+    fun setApiData(results: MutableList<CarmenFeature>, imageResId: Int) {
+        searcItemList.clear()
+        results.map {
+            val data = it.properties()?.getAsJsonPrimitive("address")
+            if (data == null) {
+                searcItemList.add(
+                    NearByPlacesDetailDataModel(
+                        cityName = it.placeName()!!,
+                        imageResId, it.placeName()!!,
+                        it.center()!!.latitude(),
+                        it.center()!!.longitude()
+                    )
+                )
+            } else {
+                searcItemList.add(
+                    NearByPlacesDetailDataModel(
+                        cityName = it.placeName()!!,
+                        imageResId,
+                        data.asString,
+                        it.center()!!.latitude(),
+                        it.center()!!.longitude()
+                    )
+                )
+            }
+        }
+        nearByPlacesDetailItemAdapter.setNearByPlacesDeatilitemList(searcItemList)
+    }
 }

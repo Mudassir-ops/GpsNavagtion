@@ -561,5 +561,7 @@
     <string name="tap_on_building_to_highlight">Tap on a building to highlight it</string>
     <string name="home">Home</string>
     <string name="famous_places_map">Famous Places Map</string>
+    <string name="near_by_places_map">Near By Places Map</string>
+    <string name="savedmap">SavedMap</string>
 
 </resources>

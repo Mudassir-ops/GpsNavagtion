@@ -1,7 +1,10 @@
 package com.codesk.gpsnavigation.data.local.dao
 
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.codesk.gpsnavigation.model.datamodels.SavedRecentMapTable
 
 @Dao
@@ -16,11 +19,7 @@ interface SavedRecentMapDao {
     @Query("DELETE FROM saved_recent_map_table")
     suspend fun deleteRecentMapTable()
 
-    @Query("UPDATE saved_recent_map_table SET savedPlaceName=:savedPlaceName,savedPlaceLatitude=:savedPlaceLatitude,savedPlaceLongitude =:savedPlaceLongitude WHERE savedPlaceID = :savedPlaceID")
-    fun updateRecentMap(savedPlaceName: String?,savedPlaceLatitude: Double?,savedPlaceLongitude: Double?, savedPlaceID: Int)
-
-//    @Update(onConflict = OnConflictStrategy.REPLACE)
-//    fun updateProduct(savedRecentMapTable: SavedRecentMapTable)
-
+    @Query("DELETE FROM saved_recent_map_table WHERE savedPlaceID = :savedPlaceID")
+    fun removeRowAtPosition(savedPlaceID: Int)
 
 }

@@ -11,7 +11,6 @@ import java.util.*
 interface ApiServices {
 
 
-
     @GET("mapbox.places/")
     fun getNearByAirport(
         @Url searchQueryName: String,

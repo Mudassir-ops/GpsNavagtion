@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -31,15 +32,15 @@ import com.codesk.gpsnavigation.databinding.FragmentNearbyBottomNavigationBindin
 import com.codesk.gpsnavigation.model.adapters.NearByItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.NearByItemDataModel
 import com.codesk.gpsnavigation.utill.commons.AppConstants
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showNoInternetDialog
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions.Companion.showMessage
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions.Companion.showNoInternetDialog
 import java.util.*
 
 class NearbyBottomNavFragment : Fragment() {
 
     private var _binding: FragmentNearbyBottomNavigationBinding? = null
     private val binding get() = _binding!!
-
 
     private lateinit var nearByItemAdapter: NearByItemAdapter
     var searcItemList = ArrayList<NearByItemDataModel>()
@@ -55,11 +56,12 @@ class NearbyBottomNavFragment : Fragment() {
         _binding = FragmentNearbyBottomNavigationBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
         binding.apply {
-
+            headerLayout.backImageview.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_nearby, true)
+                findNavController().navigate(R.id.navigation_home)
+            }
             headerLayout.micImageviewOuterLayout.setOnClickListener {
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(
                             requireContext(),
@@ -78,24 +80,25 @@ class NearbyBottomNavFragment : Fragment() {
                             positiveButtonFunction = {
                                 getPermissionToRecordAudio()
                             },
-
                             )
-
-
                     }
-
-
                 }
             }
-
-
             nearByItemAdapter =
-                NearByItemAdapter(requireContext()) { _position: Int, _placeName: String ->
+                NearByItemAdapter(requireContext()) { _position: Int, _placeName: String, imageResId ->
                     Log.d(TAG, "onCreateView: $_position")
-                    if (CommonFunctions.checkForInternet(requireContext())){
+                    if (CommonFunctions.checkForInternet(requireContext())) {
+                        if (AppConstants.mCurrentLocation == null) {
+                            showMessage(
+                                binding.root,
+                                "Unfortunately Current Loc not Found Restart App"
+                            )
+                            return@NearByItemAdapter
+                        }
                         val bundle = Bundle()
                         bundle.putString(SELECTEDTYPE, _placeName)
                         bundle.putInt(SELECTEDPPOSITION, _position)
+                        bundle.putInt(SELECTEDIAMGERESID, imageResId)
                         findNavController().navigate(R.id.navigation_nearby_place_detail, bundle)
                     }else{
                         requireContext().showNoInternetDialog(
@@ -104,8 +107,16 @@ class NearbyBottomNavFragment : Fragment() {
                             titleOfPositiveButton = "",
                             titleOfNegativeButton = "",
                             positiveButtonFunction = {
-                                val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-                                startActivityForResult(panelIntent,402)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    val panelIntent =
+                                        Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                                    startActivityForResult(panelIntent, 402)
+                                } else {
+                                    (requireContext().getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
+                                        isWifiEnabled = true /*or false*/
+                                    }
+                                }
+
                             }
                         )
                     }
@@ -142,11 +153,8 @@ class NearbyBottomNavFragment : Fragment() {
                 }
             })
 
-
         }
         nearByItemAdapter.setNearByitemList(getNearByData())
-
-
 
         return root
     }
@@ -192,6 +200,7 @@ class NearbyBottomNavFragment : Fragment() {
     companion object {
         val SELECTEDTYPE = "SELECTEDTYPE"
         val SELECTEDPPOSITION = "SELECTEDPPOSITION"
+        val SELECTEDIAMGERESID = "SELECTEDIAMGERESID"
         val TAG = "NearbyFragmentTAG"
         val RECORD_AUDIO_REQUEST_CODE = 101
     }
@@ -218,7 +227,7 @@ class NearbyBottomNavFragment : Fragment() {
         val dialog = Dialog(this, R.style.Theme_Dialog)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.setContentView(R.layout.permession_denyied_dialouge)
 
         val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
@@ -307,8 +316,6 @@ class NearbyBottomNavFragment : Fragment() {
                 }
 
             }
-        }else if(requestCode==402){
-
         }
     }
 

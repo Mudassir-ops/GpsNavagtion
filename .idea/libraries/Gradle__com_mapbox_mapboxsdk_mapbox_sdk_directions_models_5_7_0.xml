@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.mapbox.mapboxsdk:mapbox-sdk-directions-models:5.7.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.mapboxsdk/mapbox-sdk-directions-models/5.7.0/cd3c648e30addb5571da434c9c42121ca4af13b3/mapbox-sdk-directions-models-5.7.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.mapboxsdk/mapbox-sdk-directions-models/5.7.0/ef233d64314df2e75bff940e7abbf39790e321dd/mapbox-sdk-directions-models-5.7.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.mapboxsdk/mapbox-sdk-directions-models/5.7.0/9f46826bae8c10ef5cc58d2d3334038e91fc29ae/mapbox-sdk-directions-models-5.7.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

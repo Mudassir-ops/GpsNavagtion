@@ -7,14 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.R
-import com.codesk.gpsnavigation.databinding.FragmentFamousPlaceMapBinding
-import com.codesk.gpsnavigation.databinding.FragmentSearchPlaceMapBinding
 import com.codesk.gpsnavigation.databinding.FragmentSearchPlacesMapBinding
-import com.codesk.gpsnavigation.model.adapters.ChildAdapter
-import com.codesk.gpsnavigation.ui.fragments.famousplacesmap.FamousPlaceMapFragment
 import com.codesk.gpsnavigation.ui.fragments.search.SearchBottomNavFragment
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -61,6 +56,10 @@ class SearchPlacesMapFragment : Fragment() {
         binding.apply {
             tvPlaceName.text=selectedPlaceName
 
+            backImageview.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_search_places_map, true)
+                findNavController().navigate(R.id.navigation_home)
+            }
            ivShowOnTheMap.setOnClickListener {
                val bundle = Bundle()
                bundle.putDouble(SEARCHEDLATITUDE, selectedLatitude)
@@ -68,7 +67,6 @@ class SearchPlacesMapFragment : Fragment() {
                bundle.putString(SEARCHEDNAME,selectedPlaceName)
                findNavController().navigate(R.id.navigation_search_place_map,bundle)
            }
-
 
         }
 

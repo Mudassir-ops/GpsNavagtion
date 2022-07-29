@@ -7,29 +7,23 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -40,12 +34,7 @@ import com.codesk.gpsnavigation.model.adapters.SearchItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.SavedRecentMapTable
 import com.codesk.gpsnavigation.model.datamodels.SearchItemDataModel
 import com.codesk.gpsnavigation.ui.fragments.nearby.NearbyBottomNavFragment.Companion.TAG
-import com.codesk.gpsnavigation.utill.commons.AppConstants
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.observeOnce
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showNoInternetDialog
-import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions.Companion.observeOnce
 import com.google.gson.JsonObject
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.Point
@@ -69,26 +58,15 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
 
     private val REQUEST_CODE_AUTOCOMPLETE = 1
     private var home: CarmenFeature? = null
-    private var test: CarmenFeature? = null
     private var work: CarmenFeature? = null
-    private val geojsonSourceLayerId = "geojsonSourceLayerId"
-    private val symbolIconId = "symbolIconId"
-
     private val RECORD_AUDIO_REQUEST_CODE = 101
-    private var mCurrentLocation: Location? = null
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private var mRequestingLocationUpdates: Boolean? = false
-    private var locationRequest: LocationRequest? = null
-
-    private var locationCallback1: LocationCallback? = null
 
     private var _binding: FragmentSearchBottomNavigationBinding? = null
     private val binding get() = _binding!!
     private val viewModel: SearchBottomNavViewModel by viewModels()
 
-
-    var sizeOfRecentList=-1
-
+    var sizeOfRecentList = -1
+    var firstAddedValueId = 0
     var latitude: Double? = 33.51677995083078
     var lngitude: Double? = 73.15474762784669
     var placeName: String? = "Zaraj"
@@ -109,9 +87,14 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
 
         binding.headerLayout.backImageview.visibility = View.VISIBLE
         binding.apply {
+             binding.headerLayout.searchTextview.isClickable=false
+             binding.headerLayout.searchTextview.isFocusable=false
+             binding.headerLayout.searchTextview.inputType= InputType.TYPE_NULL
+
             binding.headerLayout.searchTextview.setOnClickListener {
                 initSearch()
             }
+
 
             adapterSearchItemAdapter = SearchItemAdapter(requireContext()) { pos, lat, lng, pname ->
                 val bundle = Bundle()
@@ -145,13 +128,11 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                             positiveButtonFunction = {
                                 getPermissionToRecordAudio()
                             },
-                            )
+                        )
                     }
                 }
             }
-
-            headerLayout.searchTextview.addTextChangedListener(object :
-                TextWatcher {
+            headerLayout.searchTextview.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     charSequence: CharSequence,
                     i: Int,
@@ -198,7 +179,6 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                         }
                     })
             }
-
             btnClearSearch.setOnClickListener {
                 searcItemList.clear()
                 CoroutineScope(IO).launch {
@@ -208,76 +188,44 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                 }
                 adapterSearchItemAdapter.setSearchitemList(searcItemList)
             }
-
             headerLayout.backImageview.setOnClickListener {
-                //------initial fragment
+                findNavController().popBackStack(R.id.navigation_search, true)
+                findNavController().navigate(R.id.navigation_home)
             }
-
         }
-
-
         searcItemList.clear()
-        livedata
-            .observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer { list ->
-                Log.d(TAG, "onCreateView: ${list.size}")
-                list.map {
-                    searcItemList.add(
-                        SearchItemDataModel(
-                            cityName = it.savedPlaceName,
-                            savedPlaceLatitude = it.savedPlaceLatitude,
-                            savedPlaceLongitude = it.savedPlaceLongitude
-                        )
+        livedata.observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer { list ->
+            Log.d(TAG, "onCreateView: ${list.size}")
+            list.map {
+                searcItemList.add(
+                    SearchItemDataModel(
+                        cityName = it.savedPlaceName,
+                        savedPlaceLatitude = it.savedPlaceLatitude,
+                        savedPlaceLongitude = it.savedPlaceLongitude
                     )
-                }
-
-
-                if(searcItemList.size>2){
-                    adapterSearchItemAdapter.setSearchitemList(searcItemList.reversed() as ArrayList<SearchItemDataModel>)
-                }else{
-                    adapterSearchItemAdapter.setSearchitemList(searcItemList)
-                }
-
-            })
-
+                )
+            }
+            if (searcItemList.size > 2) {
+                adapterSearchItemAdapter.setSearchitemList(searcItemList.reversed() as ArrayList<SearchItemDataModel>)
+            } else {
+                adapterSearchItemAdapter.setSearchitemList(searcItemList)
+            }
+        })
 
         return binding.root
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
     override fun onResume() {
         super.onResume()
-        if (AppConstants.mCurrentLocation == null) {
-            if (CommonFunctions.checkForInternet(requireContext())) {
-                setUpLocationListener()
-            } else {
-                requireContext().showNoInternetDialog(
-                    title = "Privacy Policy",
-                    description = "",
-                    titleOfPositiveButton = "",
-                    titleOfNegativeButton = "",
-                    positiveButtonFunction = {
-                        val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-                        startActivityForResult(panelIntent, 402)
-                    }
-                )
-            }
-
-        }
-
         binding.headerLayout.searchTextview.setText("")
-
     }
-
     private fun getPermissionToRecordAudio() {
         // 1) Use the support library version ContextCompat.checkSelfPermission(...) to avoid checking the build version since Context.checkSelfPermission(...) is only available in Marshmallow
         // 2) Always check for permission (even if permission has already been granted) since the user can revoke permissions at any time through Settings
-
-
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.RECORD_AUDIO
@@ -342,7 +290,6 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                             })
                     }
                 }
-
             }
         }
     }
@@ -375,7 +322,10 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
             findNavController().navigate(R.id.navigation_search_places_map, bundle)
 
             viewModel.getAllRecentMap().observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer {
-                sizeOfRecentList=it.size
+                sizeOfRecentList = it.size
+                if (sizeOfRecentList > 0) {
+                    firstAddedValueId = it[0].savedPlaceID
+                }
             })
             if(sizeOfRecentList<6){
                 CoroutineScope(IO).launch {
@@ -390,22 +340,26 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
                         )
                     }
                 }
-            }else {
-                 viewModel.updateRecentMap(
-                     savedPlaceName = placeName!!,
-                     savedPlaceLatitude = latitude!!,
-                     savedPlaceLongitude = lngitude!!,
-                     savedPlaceID = 1
-                 )
+            } else {
+                //--remove first added value in db
+                viewModel.removeRowAtPosition(firstAddedValueId)
+                Log.d(TAG, "onActivityResult: $firstAddedValueId")
+                //--add new value at new position
+                CoroutineScope(IO).launch {
+                    withContext(Main) {
+                        val savedRecentMapTable = SavedRecentMapTable(
+                            savedPlaceName = placeName!!,
+                            savedPlaceLatitude = latitude,
+                            savedPlaceLongitude = lngitude
+                        )
+                        viewModel.insertRecentMap(
+                            savedRecentMapTable
+                        )
+                    }
+                }
             }
-
-
-
-        } else if (requestCode == 402) {
-            setUpLocationListener()
         }
     }
-
     private fun startVoiceRecognition() {
         val intent = Intent("android.speech.action.RECOGNIZE_SPEECH")
         intent.putExtra("android.speech.extra.LANGUAGE_MODEL", "free_form")
@@ -425,7 +379,7 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
         val dialog = Dialog(this, R.style.Theme_Dialog)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.setContentView(R.layout.permession_denyied_dialouge)
 
         val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
@@ -449,98 +403,9 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
         }
         dialog.show()
     }
-
-    private fun setUpLocationListener() {
-
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-        if (mCurrentLocation == null) {
-
-            locationRequest = LocationRequest.create().apply {
-                interval = 100
-                fastestInterval = 50
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                maxWaitTime = 100
-                smallestDisplacement = 0f
-
-            }
-
-            val builder = LocationSettingsRequest.Builder()
-            builder.addLocationRequest(locationRequest!!).build()
-
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return
-            }
-
-             locationCallback1= object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    mCurrentLocation = locationResult.lastLocation
-                    mRequestingLocationUpdates = true
-                    AppConstants.mCurrentLocation = mCurrentLocation
-
-                    if (mCurrentLocation != null) {
-                        stopLocationUpdates()
-                    }
-
-                    Log.d("CurrentLocation", "onLocationResult:$mCurrentLocation ")
-
-                }
-            }
-
-            fusedLocationProviderClient.requestLocationUpdates(
-                locationRequest!!,
-                locationCallback1!!,
-                Looper.myLooper()
-            );
-
-
-            /*      fusedLocationProviderClient.requestLocationUpdates(
-                      locationRequest!!, object : LocationCallback() {
-                          override fun onLocationResult(locationResult: LocationResult) {
-                              super.onLocationResult(locationResult)
-                              mCurrentLocation = locationResult.lastLocation
-                              mRequestingLocationUpdates = true
-
-                              Log.d("CurrentLocation", "onLocationResult:$mCurrentLocation ")
-
-                          }
-                      },
-                      Looper.myLooper()!!
-                  )*/
-
-        }
-
-    }
-
     override fun onPause() {
         super.onPause()
-        //  stopLocationUpdates()
     }
-
-    private fun stopLocationUpdates() {
-        if(AppConstants.mCurrentLocation!=null){
-            try {
-                val voidTask: Task<Void> =
-                    fusedLocationProviderClient?.removeLocationUpdates(locationCallback1!!)
-                if (voidTask.isSuccessful()) {
-                    Log.d(TAG, "StopLocation updates successful! ")
-                } else {
-                    Log.d(TAG, "StopLocation updates unsuccessful! " + voidTask.toString())
-                }
-            } catch (exp: SecurityException) {
-                Log.d(TAG, " Security exception while removeLocationUpdates")
-            }
-        }
-    }
-
     override fun onMapReady(mapboxMap: MapboxMap) {}
     private fun initSearch() {
         addUserLocations()
@@ -558,11 +423,8 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
             .build(requireActivity())
         intent.putExtra("dasdsa","asdsa")
         startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE)
-
     }
-
     private fun addUserLocations() {
-
         home = CarmenFeature.builder().text("Codesk Technologies")
             .geometry(Point.fromLngLat(73.10539472667229, 33.50094316483796))
             .placeName("G424+852, Bahria Safari Valley Sector E Bahria Safari Valley, Rawalpindi, Punjab, Pakistan")
@@ -577,13 +439,5 @@ class SearchBottomNavFragment : Fragment(), OnMapReadyCallback {
             .build()
     }
 
-    private fun performSearch() {
-        binding.headerLayout.searchTextview.clearFocus()
-        val `in`: InputMethodManager? =requireContext().
-        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        `in`!!.hideSoftInputFromWindow( binding.headerLayout.searchTextview.getWindowToken(), 0)
-        //...perform search
-
-    }
 
 }

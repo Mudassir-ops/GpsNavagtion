@@ -3,9 +3,7 @@ package com.codesk.gpsnavigation.model.datamodels
 import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
 import com.google.gson.annotations.SerializedName
-import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "saved_recent_map_table")
 data class SavedRecentMapTable(

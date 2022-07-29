@@ -1,9 +1,12 @@
 <component name="libraryTable">
   <library name="Gradle: com.mapbox.mapboxsdk:mapbox-android-plugin-places-v7:0.7.0@aar">
     <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/2e084ec9ea06abc6bee825d130772a0c/transformed/jetified-mapbox-android-plugin-places-v7-0.7.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/2e084ec9ea06abc6bee825d130772a0c/transformed/jetified-mapbox-android-plugin-places-v7-0.7.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/2e084ec9ea06abc6bee825d130772a0c/transformed/jetified-mapbox-android-plugin-places-v7-0.7.0/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/ebfe296b465e967ff5132bf8889370ba/transformed/jetified-mapbox-android-plugin-places-v7-0.7.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ebfe296b465e967ff5132bf8889370ba/transformed/jetified-mapbox-android-plugin-places-v7-0.7.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ebfe296b465e967ff5132bf8889370ba/transformed/jetified-mapbox-android-plugin-places-v7-0.7.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ebfe296b465e967ff5132bf8889370ba/transformed/jetified-mapbox-android-plugin-places-v7-0.7.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

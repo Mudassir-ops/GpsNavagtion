@@ -8,15 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentFamousPlacesBottomNavigationBinding
 import com.codesk.gpsnavigation.model.adapters.ParentAdapter
-import com.codesk.gpsnavigation.model.adapters.SearchItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.ParentDataFactory
 import com.codesk.gpsnavigation.model.datamodels.ParentModel
 import java.util.*
@@ -41,6 +38,10 @@ class FamousPlacesBottomNavFragment : Fragment() {
 
 
         binding.apply {
+            headerLayout.backImageview.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_famousplaces, true)
+                findNavController().navigate(R.id.navigation_home)
+            }
 
             headerLayout.searchTextview.addTextChangedListener(object :
                 TextWatcher {

@@ -3,8 +3,6 @@ package com.codesk.gpsnavigation.utill.commons
 import androidx.annotation.Nullable
 import androidx.recyclerview.widget.DiffUtil
 import com.codesk.gpsnavigation.model.datamodels.FamousPlacesDetailDataModel
-import com.codesk.gpsnavigation.model.datamodels.NearByItemDataModel
-import com.codesk.gpsnavigation.model.datamodels.SearchItemDataModel
 
 class FamousPlacesDetailItemDiffCallback : DiffUtil.Callback(){
     private var mOldFightList: List<FamousPlacesDetailDataModel>? = null

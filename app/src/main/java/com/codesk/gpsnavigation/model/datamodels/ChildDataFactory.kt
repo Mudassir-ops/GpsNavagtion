@@ -1,7 +1,6 @@
 package com.codesk.gpsnavigation.model.datamodels
 
 import com.codesk.gpsnavigation.R
-import com.mapbox.geojson.Point
 
 object ChildDataFactory {
 

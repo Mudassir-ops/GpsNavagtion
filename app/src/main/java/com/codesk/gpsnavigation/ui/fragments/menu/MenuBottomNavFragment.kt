@@ -1,22 +1,29 @@
 package com.codesk.gpsnavigation.ui.fragments.menu
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.codesk.gpsnavigation.BuildConfig
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentMenuBottomNavigationBinding
 import com.codesk.gpsnavigation.model.adapters.ChildAdapter
 import com.codesk.gpsnavigation.model.adapters.SavedMapItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.SavedMapDataModel
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showDialog
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions.Companion.showDialog
 
 
 class MenuBottomNavFragment : Fragment() {
@@ -31,6 +38,26 @@ class MenuBottomNavFragment : Fragment() {
     var dbLatitude = 0.0
     var dbLongitude = 0.0
 
+    val simpleItemTouchCallback: ItemTouchHelper.SimpleCallback = object :
+        ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.DOWN or ItemTouchHelper.UP
+        ) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+            //Remove swiped item from list and notify the RecyclerView
+            val position = viewHolder.adapterPosition
+            searcItemList.removeAt(position)
+            savedMapItemAdapter.notifyDataSetChanged()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,13 +66,19 @@ class MenuBottomNavFragment : Fragment() {
         _binding = FragmentMenuBottomNavigationBinding.inflate(inflater, container, false)
 
         binding.apply {
+
+            binding.headerLayoutsecond.image.visibility = View.INVISIBLE
+            headerLayoutsecond.backImageview.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_menu, true)
+                findNavController().navigate(R.id.navigation_home)
+            }
+
             savedMapItemAdapter = SavedMapItemAdapter(requireContext()) { latitude, lngitude ->
                 dbLatitude = latitude
                 dbLongitude = lngitude
-
                 overlayLayout.visibility = View.VISIBLE
-                /* outerLayoutFamousPlacesDetail.backgroundTintList= ColorStateList.valueOf(Color.parseColor("#d8d8d8"))*/
             }
+
 
             //---actually show on map btn xml naming wrong
             ivSavedMap.setOnClickListener {
@@ -63,6 +96,9 @@ class MenuBottomNavFragment : Fragment() {
             rvSavedMap.apply {
                 adapter = savedMapItemAdapter
             }
+
+            val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
+            itemTouchHelper.attachToRecyclerView(rvSavedMap)
 
             ivPrivacyPolicy.setOnClickListener {
                 requireContext().showDialog(
@@ -158,10 +194,22 @@ class MenuBottomNavFragment : Fragment() {
                 )
             }
         }
-
-
         viewModel.getAllSavedMap().observe(viewLifecycleOwner, Observer { list ->
             searcItemList.clear()
+            if (list.isEmpty()) {
+                val dialog = Dialog(requireContext(), R.style.Theme_Dialog)
+                dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog.setCancelable(true)
+                dialog.setContentView(R.layout.no_map_saved_dialouge)
+                val btnCancel = dialog.findViewById(R.id.btn_save) as AppCompatButton
+                btnCancel.setOnClickListener {
+                    dialog.dismiss()
+                }
+
+                dialog.show()
+                binding.overlayLayout.visibility = View.VISIBLE
+            }
             list.map {
                 searcItemList.add(
                     SavedMapDataModel(
@@ -173,50 +221,8 @@ class MenuBottomNavFragment : Fragment() {
                 )
             }
             savedMapItemAdapter.setFamousPlacesitemList(searcItemList)
-
         })
-
         return binding.root
-
-    }
-
-    private fun getNearByData(): ArrayList<SavedMapDataModel> {
-        searcItemList.clear()
-        searcItemList.add(
-            SavedMapDataModel(
-                cityName = "Shah Faisal Masjid",
-                R.drawable.dummy_map
-            )
-        )
-        searcItemList.add(
-            SavedMapDataModel(
-                cityName = "Paksitan Monument",
-                R.drawable.dummy_map
-            )
-        )
-        searcItemList.add(SavedMapDataModel(cityName = "Giga Mall", R.drawable.gigamall))
-        searcItemList.add(
-            SavedMapDataModel(
-                cityName = "Lake View Park",
-                R.drawable.dummy_map
-            )
-        )
-        searcItemList.add(
-            SavedMapDataModel(
-                cityName = "Margala Hills",
-                R.drawable.dummy_map
-            )
-        )
-        searcItemList.add(
-            SavedMapDataModel(
-                cityName = "Centurus Mall",
-                R.drawable.dummy_map
-            )
-        )
-
-
-
-        return searcItemList
     }
 
     companion object {

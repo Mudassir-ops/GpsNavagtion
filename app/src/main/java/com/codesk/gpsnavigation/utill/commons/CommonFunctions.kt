@@ -1,11 +1,10 @@
-package com.codesktech.volumecontrol.utills.commons
+package com.codesk.gpsnavigation.utill.commons
 
 
 import android.app.Activity
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.Context.WIFI_SERVICE
 import android.content.Intent
 import android.content.res.Resources
 import android.content.res.Resources.NotFoundException
@@ -17,17 +16,14 @@ import android.location.Address
 import android.location.Geocoder
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.text.Html
 import android.text.Spanned
 import android.view.View
 import android.view.Window
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isGone
 import androidx.lifecycle.LifecycleOwner
@@ -68,7 +64,7 @@ class CommonFunctions {
             val dialog = Dialog(this, R.style.Theme_Dialog)
             dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog.setCancelable(false)
+            dialog.setCancelable(true)
             dialog.setContentView(R.layout.privacy_policy_layout)
             val dialogTitle = dialog.findViewById(R.id.tv_privacy) as TextView
             val dialogDescription = dialog.findViewById(R.id.privacypolicy) as TextView
@@ -103,9 +99,6 @@ class CommonFunctions {
                 }
             })
         }
-
-
-
 
         fun showMessage(view: View, message: String) {
             val snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG)

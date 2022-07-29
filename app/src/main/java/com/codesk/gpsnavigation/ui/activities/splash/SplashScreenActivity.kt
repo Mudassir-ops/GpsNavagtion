@@ -28,7 +28,7 @@ import androidx.core.view.isGone
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.ActivitySplashScreenBinding
 import com.codesk.gpsnavigation.ui.activities.home.MainActivity
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showDialog
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions.Companion.showDialog
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationServices
@@ -119,7 +119,7 @@ class SplashScreenActivity : AppCompatActivity() {
         val dialog = Dialog(this, R.style.Theme_Dialog)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.setContentView(R.layout.permession_denyied_dialouge)
 
         val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton

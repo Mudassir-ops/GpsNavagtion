@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -25,6 +26,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentSearchPlaceMapBinding
 import com.codesk.gpsnavigation.model.adapters.TrvellingModeItemAdapter
@@ -34,8 +36,9 @@ import com.codesk.gpsnavigation.ui.fragments.famousplacesmap.FamousPlaceMapFragm
 import com.codesk.gpsnavigation.ui.fragments.searchplacesmap.SearchPlacesMapFragment
 import com.codesk.gpsnavigation.utill.commons.AppConstants
 import com.codesk.gpsnavigation.utill.commons.AppConstants.Companion.mCurrentLocation
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showNoInternetDialog
+import com.codesk.gpsnavigation.utill.commons.SharedPreferencesUtil
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions.Companion.showNoInternetDialog
 import com.google.gson.JsonObject
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.api.directions.v5.DirectionsCriteria
@@ -90,6 +93,8 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentSearchPlaceMapBinding? = null
     private val binding get() = _binding!!
+    private val searchPlaceFragmentViewModel: SearchPlaceFragmentViewModel by viewModels()
+
     private lateinit var trvellingModeItemAdapter: TrvellingModeItemAdapter
     var searcItemList = ArrayList<TravellingModeDataModel>()
 
@@ -131,40 +136,56 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
 
         binding.apply {
             placeName.text = selectedPlaceName
-
-
             binding.searchTextview.setOnClickListener {
                 initSearchFab()
             }
 
-            /*     binding.searchTextview.setOnEditorActionListener { _, actionId, _ ->
-                     if (actionId == EditorInfo.IME_ACTION_DONE) {
-                         performSearch()
-                         Toast.makeText(requireContext(), "searchaction done clciked", Toast.LENGTH_SHORT).show()
-                     }
-                     true
-                 }*/
-
-
-
-
-
-            if (CommonFunctions.checkForInternet(requireContext())) {
-                mapView!!.getMapAsync(OnMapReadyCallback { mapboxMap ->
-                    SearchPlaceMapFragment.mapboxMap = mapboxMap
-                    mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
-                        origin =
-                            Point.fromLngLat(
-                                mCurrentLocation!!.longitude,
-                                mCurrentLocation!!.latitude
-                            )
-                        destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
-                        enableLocationComponent(style)
-                        initSource(style)
-                        initLayers(style)
-                        getRoute(mapboxMap, origin, destination, DirectionsCriteria.PROFILE_DRIVING)
+            searchPlaceFragmentViewModel.showProgressBar.observe(
+                viewLifecycleOwner,
+                androidx.lifecycle.Observer {
+                    if (it) {
+                        binding.circularProgressIndicatr.visibility = View.VISIBLE
+                    } else {
+                        binding.circularProgressIndicatr.visibility = View.GONE
                     }
                 })
+
+
+            ivDelete.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_search_place_map, true)
+                findNavController().navigate(R.id.navigation_home)
+            }
+            if (CommonFunctions.checkForInternet(requireContext())) {
+                searchPlaceFragmentViewModel.showProgressBar.value = true
+                if (mCurrentLocation != null) {
+                    mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
+                        SearchPlaceMapFragment.mapboxMap = mapboxMap
+                        mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+                            origin =
+                                Point.fromLngLat(
+                                    mCurrentLocation!!.longitude,
+                                    mCurrentLocation!!.latitude
+                                )
+                            destination = Point.fromLngLat(selectedLongitude, selectedLatitude)
+                            enableLocationComponent(style)
+                            initSource(style)
+                            initLayers(style)
+                            getRoute(
+                                mapboxMap,
+                                origin,
+                                destination,
+                                DirectionsCriteria.PROFILE_DRIVING
+                            )
+                        }
+                    })
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Unfortunately Your Current Loc not picked \n Refresh Screen",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
             } else {
                 requireContext().showNoInternetDialog(
                     title = "Privacy Policy",
@@ -172,8 +193,15 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                     titleOfPositiveButton = "",
                     titleOfNegativeButton = "",
                     positiveButtonFunction = {
-                        val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-                        startActivityForResult(panelIntent, 402)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                            startActivityForResult(panelIntent, 402)
+                        } else {
+                            (context?.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
+                                isWifiEnabled = true /*or false*/
+                            }
+                        }
+
                     }
                 )
 
@@ -248,7 +276,10 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                         })
                 }
             }
-
+            backImageview.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_search_place_map, true)
+                findNavController().navigate(R.id.navigation_home)
+            }
 
             searchTextview.setOnClickListener {
                 initSearchFab()
@@ -256,6 +287,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
             trvellingModeItemAdapter = TrvellingModeItemAdapter(requireContext()) {
                 when (it) {
                     0 -> {
+                        searchPlaceFragmentViewModel.showProgressBar.value = true
                         if (CommonFunctions.checkForInternet(requireContext())) {
                             binding.mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
                                 mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
@@ -280,15 +312,22 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                                 titleOfPositiveButton = "",
                                 titleOfNegativeButton = "",
                                 positiveButtonFunction = {
-                                    val panelIntent =
-                                        Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-                                    startActivityForResult(panelIntent, 402)
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                        val panelIntent =
+                                            Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                                        startActivityForResult(panelIntent, 402)
+                                    } else {
+                                        (context?.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
+                                            isWifiEnabled = true /*or false*/
+                                        }
+                                    }
                                 }
                             )
                         }
 
                     }
                     1 -> {
+                        searchPlaceFragmentViewModel.showProgressBar.value = true
                         if (CommonFunctions.checkForInternet(requireContext())) {
                             binding.mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
                                 mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
@@ -313,14 +352,21 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                                 titleOfPositiveButton = "",
                                 titleOfNegativeButton = "",
                                 positiveButtonFunction = {
-                                    val panelIntent =
-                                        Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-                                    startActivityForResult(panelIntent, 402)
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                        val panelIntent =
+                                            Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                                        startActivityForResult(panelIntent, 402)
+                                    } else {
+                                        (context?.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
+                                            isWifiEnabled = true /*or false*/
+                                        }
+                                    }
                                 }
                             )
                         }
                     }
                     2 -> {
+                        searchPlaceFragmentViewModel.showProgressBar.value = true
                         if (CommonFunctions.checkForInternet(requireContext())) {
                             binding.mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
                                 mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
@@ -345,9 +391,16 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                                 titleOfPositiveButton = "",
                                 titleOfNegativeButton = "",
                                 positiveButtonFunction = {
-                                    val panelIntent =
-                                        Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-                                    startActivityForResult(panelIntent, 402)
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                        val panelIntent =
+                                            Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                                        startActivityForResult(panelIntent, 402)
+                                    } else {
+                                        (context?.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
+                                            isWifiEnabled = true /*or false*/
+                                        }
+                                    }
+
                                 }
                             )
                         }
@@ -409,20 +462,20 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
         searcItemList.clear()
         searcItemList.add(
             TravellingModeDataModel(
-                travellingModeTitle = "5 hours",
+                travellingModeTitle = SharedPreferencesUtil(requireActivity()).getETATime(),
                 R.drawable.ic_baseline_directions_car_filled_24, true
             )
         )
 
         searcItemList.add(
             TravellingModeDataModel(
-                travellingModeTitle = "8 hours",
+                travellingModeTitle = SharedPreferencesUtil(requireActivity()).getETATime(),
                 R.drawable.ic_baseline_directions_bike_24, false
             )
         )
         searcItemList.add(
             TravellingModeDataModel(
-                travellingModeTitle = "20 hours",
+                travellingModeTitle = SharedPreferencesUtil(requireActivity()).getETATime(),
                 R.drawable.ic_baseline_directions_walk_24, false
             )
         )
@@ -446,7 +499,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
         val dialog = Dialog(this, R.style.Theme_Dialog)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.setContentView(R.layout.save_map_dialouge_layout)
 
         val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
@@ -577,7 +630,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                 call: Call<DirectionsResponse?>,
                 response: Response<DirectionsResponse?>
             ) {
-
+                searchPlaceFragmentViewModel.showProgressBar.value = false
                 Timber.d("Response code: " + response.code())
                 if (response.body() == null) {
                     Timber.e("No routes found, make sure you set the right user and access token.")
@@ -591,17 +644,23 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                 Log.d("CUrrentRoute", "onResponse: $currentRoute")
 
 
-                binding.tvTravelTime.text = convertSecondsToHoursAndMiunuts(
+                SharedPreferencesUtil(requireActivity()).saveETATime(
+                    convertSecondsToHoursAndMiunuts(
+                        response.body()!!.routes()[0].duration()!!.toLong()
+                    )
+                )
+
+                binding.tvTravelTime.text = "" + convertSecondsToHoursAndMiunuts(
                     response.body()!!.routes()[0].duration()!!.toLong()
                 )
-                binding.tvTotalDistance.text = convertMeterToKilometer(
+                binding.tvTotalDistance.text = "" + convertMeterToKilometer(
                     response.body()!!.routes()[0].distance()!!.toFloat()
                 ).toInt().toString() + "km"
 
                 val totalSecs = response.body()!!.routes()[0].duration()!!.toLong()
                 val hours = totalSecs / 3600
                 val minutes = (totalSecs % 3600) / 60
-                binding.tvTravelRemainningtime.text = getArrivalTime(hours, minutes).toString()
+                binding.tvTravelRemainningtime.text = "" + getArrivalTime(hours, minutes).toString()
                 mapboxMap?.getStyle { style ->
                     val source = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
                     source?.setGeoJson(
@@ -612,9 +671,11 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                     )
                 }
 
+                trvellingModeItemAdapter.setTravellingModeitemList(getTravellingModeList())
             }
 
             override fun onFailure(call: Call<DirectionsResponse?>, throwable: Throwable) {
+                searchPlaceFragmentViewModel.showProgressBar.value = false
                 Timber.e("Error: " + throwable.message)
             }
         })
@@ -794,7 +855,7 @@ class SearchPlaceMapFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         } else if (requestCode == 402) {
-            binding.mapView!!.getMapAsync(OnMapReadyCallback { mapboxMap ->
+            binding.mapView.getMapAsync(OnMapReadyCallback { mapboxMap ->
                 SearchPlaceMapFragment.mapboxMap = mapboxMap
                 mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
                     origin =

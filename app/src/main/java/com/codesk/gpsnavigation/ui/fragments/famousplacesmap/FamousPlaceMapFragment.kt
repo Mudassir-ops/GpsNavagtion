@@ -10,15 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.R
 import com.codesk.gpsnavigation.databinding.FragmentFamousPlaceMapBinding
 import com.codesk.gpsnavigation.model.adapters.ChildAdapter
 import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showMessage
+import com.codesk.gpsnavigation.utill.commons.SharedPreferencesUtil
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -62,9 +62,26 @@ class FamousPlaceMapFragment : Fragment() {
 
         selectedLatitude = requireArguments().getDouble(ChildAdapter.SelectedLatitude)
         selectedLongitude = requireArguments().getDouble(ChildAdapter.SelectedLngitude)
-        selectedPlaceName = requireArguments().getString(ChildAdapter.SelectedPlaceNAME,"")
+        selectedPlaceName = requireArguments().getString(ChildAdapter.SelectedPlaceNAME, "")
 
         binding.apply {
+
+            locName.text = selectedPlaceName
+            backImageview.setOnClickListener {
+                if (SharedPreferencesUtil(requireActivity()).isFamousPlacesSelected()) {
+                    findNavController().popBackStack(R.id.navigation_famousplaces_map, true)
+                    findNavController().popBackStack(R.id.navigation_famousplaces, true)
+                    findNavController().popBackStack(R.id.navigation_famous_places_detail, true)
+                    findNavController().navigate(R.id.navigation_famousplaces)
+
+                } else {
+                    findNavController().popBackStack(R.id.navigation_famousplaces_map, true)
+                    findNavController().popBackStack(R.id.navigation_menu, true)
+                    findNavController().navigate(R.id.navigation_menu)
+                }
+
+            }
+
             ivSavedMap.setOnClickListener {
                 requireContext().showDialog(
                     title = "Save Map",
@@ -84,10 +101,7 @@ class FamousPlaceMapFragment : Fragment() {
                                 )
                             }
                         }
-                        showMessage(
-                            binding.root,
-                            "$it Saved in Your Saved Maps"
-                        )
+                        requireContext().showDialogSavedMap()
                     })
             }
         }
@@ -190,13 +204,13 @@ class FamousPlaceMapFragment : Fragment() {
         description: String,
         titleOfPositiveButton: String? = null,
         titleOfNegativeButton: String? = null,
-        positiveButtonFunction: ((placeName:String) -> Unit)? = null,
+        positiveButtonFunction: ((placeName: String) -> Unit)? = null,
         negativeButtonFunction: (() -> Unit)? = null
     ) {
         val dialog = Dialog(this, R.style.Theme_Dialog)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.setContentView(R.layout.save_map_dialouge_layout)
 
         val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
@@ -216,4 +230,24 @@ class FamousPlaceMapFragment : Fragment() {
         }
         dialog.show()
     }
+
+
+    fun Context.showDialogSavedMap(
+    ) {
+        val dialog = Dialog(this, R.style.Theme_Dialog)
+        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.save_map_success)
+
+        val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
+
+        dialogPositiveButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+
 }

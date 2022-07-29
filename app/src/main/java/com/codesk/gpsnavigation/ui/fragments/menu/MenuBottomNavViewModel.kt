@@ -1,7 +1,10 @@
 package com.codesk.gpsnavigation.ui.fragments.menu
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.codesk.gpsnavigation.data.local.database.AppDatabase
 import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
 import kotlinx.coroutines.Dispatchers

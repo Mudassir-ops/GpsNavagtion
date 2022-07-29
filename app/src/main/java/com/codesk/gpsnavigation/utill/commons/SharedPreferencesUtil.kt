@@ -7,18 +7,31 @@ import android.content.SharedPreferences
 class
 SharedPreferencesUtil constructor(private var activity: Activity) {
 
-    private val HomeSelected: String = "HomeSelected"
+    private val FamousPlacesSelected: String = "FamousPlacesSelected"
+    private val ETATIME: String = "ETATIME"
 
-    fun saveHomeSelected(anim: Boolean) {
+    fun isFamousPlacesselected(anim: Boolean) {
         val editor: SharedPreferences.Editor =
-            activity.getSharedPreferences(HomeSelected, Context.MODE_PRIVATE).edit()
-        editor.putBoolean("HomeSelected", anim)
+            activity.getSharedPreferences(FamousPlacesSelected, Context.MODE_PRIVATE).edit()
+        editor.putBoolean("FamousPlacesSelected", anim)
         editor.apply()
     }
 
-    fun getHomeSelected(): Boolean {
-        val sharedPref = activity.getSharedPreferences(HomeSelected, Context.MODE_PRIVATE)
-        return sharedPref.getBoolean("HomeSelected", false)
+    fun isFamousPlacesSelected(): Boolean {
+        val sharedPref = activity.getSharedPreferences(FamousPlacesSelected, Context.MODE_PRIVATE)
+        return sharedPref.getBoolean("FamousPlacesSelected", false)
+    }
+
+    fun saveETATime(etaTime: String) {
+        val editor: SharedPreferences.Editor =
+            activity.getSharedPreferences(ETATIME, Context.MODE_PRIVATE).edit()
+        editor.putString("ETATIME", etaTime)
+        editor.apply()
+    }
+
+    fun getETATime(): String {
+        val sharedPref = activity.getSharedPreferences(ETATIME, Context.MODE_PRIVATE)
+        return sharedPref.getString("ETATIME", "")!!
     }
 
 }

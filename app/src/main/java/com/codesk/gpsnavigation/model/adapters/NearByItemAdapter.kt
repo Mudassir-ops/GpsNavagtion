@@ -12,7 +12,7 @@ import com.codesk.gpsnavigation.model.datamodels.NearByItemDataModel
 import com.codesk.gpsnavigation.utill.commons.NearByItemDiffCallback
 import java.util.*
 
-class NearByItemAdapter(mContext: Context, val callback: (Int, String) -> Unit) :
+class NearByItemAdapter(mContext: Context, val callback: (Int, String,Int) -> Unit) :
     RecyclerView.Adapter<NearByItemAdapter.ViewHolder>() {
 
     private var TAG = "SearchItemAdapter"
@@ -35,7 +35,7 @@ class NearByItemAdapter(mContext: Context, val callback: (Int, String) -> Unit) 
 
     inner class ViewHolder(
         private val binding: NearbyItemLayoutBinding,
-        val callback: (Int, String) -> Unit
+        val callback: (Int, String,Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dataModel: NearByItemDataModel, context: Context) {
             binding.apply {
@@ -45,7 +45,7 @@ class NearByItemAdapter(mContext: Context, val callback: (Int, String) -> Unit) 
                     .into(nearbyImageview)
 
                 cardviewOuterLayout.setOnClickListener {
-                    callback.invoke(adapterPosition, dataModel.cityName)
+                    callback.invoke(adapterPosition, dataModel.cityName,dataModel.imageResource)
                 }
 
             }

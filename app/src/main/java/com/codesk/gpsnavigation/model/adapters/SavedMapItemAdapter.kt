@@ -3,13 +3,15 @@ package com.codesk.gpsnavigation.model.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.codesk.gpsnavigation.databinding.FamosPlacesItemLayoutBinding
 import com.codesk.gpsnavigation.databinding.SavedMapItemLayoutBinding
 import com.codesk.gpsnavigation.model.datamodels.SavedMapDataModel
 import com.codesk.gpsnavigation.utill.commons.SavedMapItemDiffCallback
+
 
 class SavedMapItemAdapter(mContext: Context, val callback: (Double,Double) -> Unit) :
     RecyclerView.Adapter<SavedMapItemAdapter.ViewHolder>() {
@@ -42,6 +44,9 @@ class SavedMapItemAdapter(mContext: Context, val callback: (Double,Double) -> Un
                 cardviewLayout.setOnClickListener {
                     callback.invoke(dataModel.savedPlaceLatitude!!,dataModel.savedPlaceLongitude!!)
                 }
+
+
+
             }
         }
     }

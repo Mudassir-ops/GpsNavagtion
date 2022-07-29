@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.codesk.gpsnavigation.R
-import com.codesk.gpsnavigation.databinding.FragmentFamousPlacesDetailBinding
 import com.codesk.gpsnavigation.databinding.FragmentSavedMapBinding
 import com.codesk.gpsnavigation.model.adapters.SavedMapItemAdapter
 import com.codesk.gpsnavigation.model.datamodels.SavedMapDataModel

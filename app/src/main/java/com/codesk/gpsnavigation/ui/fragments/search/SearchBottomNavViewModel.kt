@@ -32,20 +32,10 @@ class SearchBottomNavViewModel(application: Application) : AndroidViewModel(appl
         mapDao.insertRecentMap(savedRecentMapTable)
     }
 
-     fun updateRecentMap(
-        savedPlaceName: String,
-        savedPlaceLatitude: Double,
-        savedPlaceLongitude: Double,
-        savedPlaceID: Int
-    ) {
-         viewModelScope.launch(Dispatchers.IO) {
-             mapDao.updateRecentMap(
-                 savedPlaceName = savedPlaceName,
-                 savedPlaceLatitude = savedPlaceLatitude,
-                 savedPlaceLongitude = savedPlaceLongitude,
-                 savedPlaceID = savedPlaceID
-             )
-         }
+    fun removeRowAtPosition(placeId:Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            mapDao.removeRowAtPosition(placeId)
+        }
     }
 
     suspend fun deleteRecentMapTable() {

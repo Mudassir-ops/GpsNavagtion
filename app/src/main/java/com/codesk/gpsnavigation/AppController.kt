@@ -5,9 +5,7 @@ import android.content.res.Configuration
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 
-
 class AppController : MultiDexApplication() {
-
     companion object {
         private var instance: AppController? = null
 
@@ -15,7 +13,6 @@ class AppController : MultiDexApplication() {
             return instance as AppController
         }
     }
-
     protected override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -25,7 +22,6 @@ class AppController : MultiDexApplication() {
     fun getInstance(): AppController {
         return instance!!
     }
-
 
     override fun onCreate() {
         super.onCreate()

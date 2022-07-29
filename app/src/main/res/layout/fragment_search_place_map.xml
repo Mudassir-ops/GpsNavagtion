@@ -77,6 +77,7 @@
                 android:backgroundTint="@color/blue_burry"
                 android:elevation="@dimen/_10sdp"
                 android:padding="@dimen/_3sdp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/search_textview"
@@ -311,6 +312,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_delete"
                 android:layout_width="@dimen/_30sdp"
@@ -330,5 +332,22 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/circularProgressIndicatr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:elevation="@dimen/_20sdp"
+        android:indeterminate="true"
+        android:indeterminateDuration="3000"
+        android:max="100"
+        android:progress="70"
+        android:visibility="visible"
+        app:indicatorColor="@color/white"
+        app:indicatorSize="@dimen/_60sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:trackColor="@color/purple_200" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@ import com.codesk.gpsnavigation.model.adapters.ChildAdapter
 import com.codesk.gpsnavigation.model.adapters.FamousPlacesItemAdapter
 import com.codesk.gpsnavigation.model.adapters.ParentAdapter
 import com.codesk.gpsnavigation.model.datamodels.FamousPlacesDetailDataModel
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions.Companion.showDialog
+import com.codesk.gpsnavigation.utill.commons.CommonFunctions.Companion.showDialog
 import java.util.*
 
 class FamousPlacesDetailFragment : Fragment() {

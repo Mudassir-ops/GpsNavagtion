@@ -5,22 +5,20 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
 import androidx.appcompat.widget.AppCompatButton
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.codesk.gpsnavigation.R
-import com.codesk.gpsnavigation.databinding.FragmentFamousPlaceMapBinding
 import com.codesk.gpsnavigation.databinding.FragmentNearByPlacesmapBinding
-import com.codesk.gpsnavigation.model.adapters.ChildAdapter
 import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
 import com.codesk.gpsnavigation.ui.fragments.famousplacesmap.FamousPlaceMapFragmentViewModel
 import com.codesk.gpsnavigation.ui.fragments.nearbyplacesdetail.NearByPlacesDetailFragment
-import com.codesktech.volumecontrol.utills.commons.CommonFunctions
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -63,10 +61,21 @@ class NearByPlacesmapFragment : Fragment() {
         _binding = FragmentNearByPlacesmapBinding.inflate(inflater, container, false)
 
         selectedLatitude = requireArguments().getDouble(NearByPlacesDetailFragment.SelectedLatitude)
-        selectedLongitude = requireArguments().getDouble(NearByPlacesDetailFragment.SelectedLngitude)
-        selectedPlaceName = requireArguments().getString(NearByPlacesDetailFragment.SelectedPlaceNAME,"")
+        selectedLongitude =
+            requireArguments().getDouble(NearByPlacesDetailFragment.SelectedLngitude)
+        selectedPlaceName =
+            requireArguments().getString(NearByPlacesDetailFragment.SelectedPlaceNAME, "")
 
         binding.apply {
+
+            locName.text = selectedPlaceName
+            backImageview.setOnClickListener {
+                findNavController().popBackStack(R.id.navigation_nearby_places_map, true)
+                findNavController().popBackStack(R.id.navigation_nearby_place_detail, true)
+                findNavController().popBackStack(R.id.navigation_nearby, true)
+                findNavController().navigate(R.id.navigation_nearby)
+            }
+
             ivSavedMap.setOnClickListener {
                 requireContext().showDialog(
                     title = "Save Map",
@@ -86,10 +95,8 @@ class NearByPlacesmapFragment : Fragment() {
                                 )
                             }
                         }
-                        CommonFunctions.showMessage(
-                            binding.root,
-                            "$it Saved in Your Saved Maps"
-                        )
+                        requireContext().showDialogSavedMap()
+
                     })
             }
         }
@@ -192,13 +199,13 @@ class NearByPlacesmapFragment : Fragment() {
         description: String,
         titleOfPositiveButton: String? = null,
         titleOfNegativeButton: String? = null,
-        positiveButtonFunction: ((placeName:String) -> Unit)? = null,
+        positiveButtonFunction: ((placeName: String) -> Unit)? = null,
         negativeButtonFunction: (() -> Unit)? = null
     ) {
         val dialog = Dialog(this, R.style.Theme_Dialog)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.setContentView(R.layout.save_map_dialouge_layout)
 
         val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
@@ -216,6 +223,24 @@ class NearByPlacesmapFragment : Fragment() {
             negativeButtonFunction?.invoke()
             dialog.dismiss()
         }
+        dialog.show()
+    }
+
+
+    fun Context.showDialogSavedMap(
+    ) {
+        val dialog = Dialog(this, R.style.Theme_Dialog)
+        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE) // if you have blue line on top of your dialog, you need use this code
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.save_map_success)
+
+        val dialogPositiveButton = dialog.findViewById(R.id.btn_save) as AppCompatButton
+
+        dialogPositiveButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
         dialog.show()
     }
 }

@@ -5,11 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
-import com.codesk.gpsnavigation.utill.commons.AppConstants.Companion.APP_DATABASE
 import com.codesk.gpsnavigation.data.local.dao.SavedMapDao
 import com.codesk.gpsnavigation.data.local.dao.SavedRecentMapDao
+import com.codesk.gpsnavigation.model.datamodels.SavedMapTable
 import com.codesk.gpsnavigation.model.datamodels.SavedRecentMapTable
+import com.codesk.gpsnavigation.utill.commons.AppConstants.Companion.APP_DATABASE
 
 @Database(
     entities = [SavedMapTable::class,SavedRecentMapTable::class],

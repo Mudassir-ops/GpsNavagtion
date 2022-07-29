@@ -2,7 +2,7 @@ package com.codesk.gpsnavigation.utill.commons
 
 import androidx.annotation.Nullable
 import androidx.recyclerview.widget.DiffUtil
-import com.codesk.gpsnavigation.model.datamodels.*
+import com.codesk.gpsnavigation.model.datamodels.NearByPlacesDetailDataModel
 
 class NearbyPlacesDetailItemDiffCallback : DiffUtil.Callback(){
     private var mOldFightList: List<NearByPlacesDetailDataModel>? = null

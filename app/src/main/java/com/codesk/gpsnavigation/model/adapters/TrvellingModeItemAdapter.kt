@@ -37,11 +37,11 @@ class TrvellingModeItemAdapter(mContext: Context, val callback: (Int) -> Unit) :
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dataModel: TravellingModeDataModel, context: Context) {
             binding.apply {
-                tvTravelMode.text = dataModel.travellingModeTitle
+                tvTravelMode.text = ""+dataModel.travellingModeTitle
                 Glide.with(context)
                     .load(dataModel.imageResource)
                     .into(ivTravelMode)
-
+                dataModel.travellingModeTitle
                 cardviewOuterLayout.setOnClickListener {
                     updatedapter(adapterPosition)
                     callback.invoke(adapterPosition)

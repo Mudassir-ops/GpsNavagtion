@@ -5,11 +5,8 @@
     android:layout_height="match_parent"
     android:background="@color/purple_500"
     tools:context=".ui.activities.splash.SplashScreenActivity">
-
     <include
         android:id="@+id/content"
         layout="@layout/content_splash" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
